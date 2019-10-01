@@ -1,0 +1,50 @@
+{% extends 'sellingsapp/base.html' %}
+{% block title %}Lista de Campañas{% endblock %}
+{% load static %}
+{% block content %}
+
+{% if user.is_authenticated %}
+<script src="{% static 'sellingsapp/js/function.js' %}"></script>
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col">
+                    <form id="frmsearch" method='GET' action="{% url 'proyectionList' %}">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <label class="fa fa-search"></label>
+                                </span>
+                            </div>
+                            <input id="search_cc_id" name="search_cc_id" value="{{request.GET.search_cc_id}}" type="text"
+                                class="form-control" placeholder="# Identificación" aria-label="search_cc_id"
+                                aria-describedby="basic-addon1">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="jumbotron">
+            {% if proyeccion_ingre %}
+                <h4 class="display-11">Proyección ingresadas  </h4>
+                <p class="lead">{{proyeccion_ingre}}</p>
+                <h4 class="display-11">Proyección instaladas  </h4>
+                <p class="lead">{{proyeccion_instal}}</p>
+                <hr class="my-4">
+            {% else %}
+                <p class="lead">No se han encontrado proyecciones para este usuario</p>
+                <hr class="my-4">
+            {% endif %} 
+        </div> 
+    </div>
+</div>
+{% else %}
+  <div class="row">
+      <div class="col-lg-6 offset-lg-3">
+        {% include 'sellingsapp/info_sesion.html' %}
+      <div>
+  </div> 
+{% endif %}
+{% endblock %}

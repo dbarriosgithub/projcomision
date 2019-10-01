@@ -1,0 +1,56 @@
+{% extends "sellingsapp/base.html" %}
+{% block title %}Detalle de persona{% endblock  %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="col-lg-6 offset-lg-3">
+ <div class="card mt-3">
+  <div class="card-header">
+    Detail person
+  </div>
+  <div class="card-body">
+     <form method="post" action="#">
+      {% csrf_token %}
+        <div class="row">
+            <div class="col">
+             {{ form.cc_id|add_class:"form-control"|append_attr:"placeholder:Identification" }}
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+             {{ form.first_name|add_class:"form-control"|append_attr:"placeholder:First name" }}
+            </div>
+            <div class="col">
+             {{ form.last_name|add_class:"form-control"|append_attr:"placeholder:Last name" }}
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+             {{ form.address|add_class:"form-control"|append_attr:"placeholder:Address" }}
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+             {{form.celphone|add_class:"form-control"|append_attr:"placeholder:Celphone" }}
+            </div>
+            <div class="col">
+             {{form.email|add_class:"form-control"|append_attr:"placeholder:Email" }}
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" type="submit" name="btnEnviar" id="btnEnviar" value="Guardar">
+                   <i class="far fa-save"></i> Save
+                </button>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>
+</div>
+{% endblock %}

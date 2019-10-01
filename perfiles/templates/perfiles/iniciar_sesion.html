@@ -1,0 +1,41 @@
+{% extends 'sellingsapp/base.html' %}
+{% block title %}Inicio de sesión{% endblock %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="card mt-3">
+            <div class="card-header">
+                Iniciar sesión
+            </div>
+            <div class="card-body">
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col">
+                             {{ form.username|add_class:"form-control"|append_attr:"placeholder:Username" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                             {{ form.password|add_class:"form-control"|append_attr:"placeholder:Password" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary" type="submit" name="btnEnviar" id="btnEnviar"
+                                value="Guardar">
+                                <i class="fas fa-sign-in-alt"></i>Login
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+

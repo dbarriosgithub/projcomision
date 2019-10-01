@@ -1,0 +1,70 @@
+{% extends 'sellingsapp/base.html' %}
+{% block title %}Lista de clientes{% endblock %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+
+{% if user.is_authenticated and user.username == "@dm1n" %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="card mt-3">
+            <div class="card-header">
+                Add person
+            </div>
+            <div class="card-body">
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col">
+                            {{ form.cc_id|add_class:"form-control"|append_attr:"placeholder:Identification" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            {% comment %} -- el formato del campo de texto se implementa en el archivo forms.py
+                            {% endcomment %}
+                            {{ form.first_name}}
+                        </div>
+                        <div class="col">
+                            {{form.last_name|add_class:"form-control"|append_attr:"placeholder:Last name" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            {{form.address|add_class:"form-control"|append_attr:"placeholder:Address" }}
+                        </div>
+                        <div class="col">
+                            {% comment %} -- el formato del campo de Email se implementa en el archivo forms.py
+                            {% endcomment %}
+                            {{form.email}}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            {{form.celphone|add_class:"form-control"|append_attr:"placeholder:Celphone" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary" type="submit" name="btnEnviar" id="btnEnviar" value="Guardar">
+                                <i class="far fa-save"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+ {% else %}
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            {% include 'sellingsapp/info_sesion.html'  with message="No tienes privilegios suficientes para acceder" %}
+        <div>
+    </div> 
+{% endif %}
+{% endblock%}

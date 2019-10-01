@@ -1,0 +1,12 @@
+            <div class="jumbotron">
+                {% if message != "" %}
+                  <h2 class="display-11">{{message}}</h2>
+                {% else %}
+                  <h2 class="display-11">No tienes una sesión activa/h2>
+                {% endif %}
+
+                <p class="lead">Para ingresar al sistema debes autenticarte.</p>
+                <hr class="my-4">
+                <p>Haz click en iniciar sesión.</p>
+                <a class="btn btn-primary btn-lg" href="{% url 'sign_in' %}" role="button">Iniciar sesión</a>
+            </div> 

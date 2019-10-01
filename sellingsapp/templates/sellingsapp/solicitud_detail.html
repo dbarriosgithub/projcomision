@@ -1,0 +1,80 @@
+{% extends "sellingsapp/base.html" %}
+{% block title %}Detalle de campaña{% endblock  %}
+{% load static %}
+{% block content %}
+{% if user.is_authenticated %}
+<script src="{% static 'sellingsapp/js/function.js' %}"></script>
+<div class="col-lg-6 offset-lg-3">
+<div class="card mt-3">
+  <div class="card-header">
+    Detail campaign
+  </div>
+  <div class="card-body">
+        <form method="POST" class="post-form">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col">
+            <label for="id_product_name"><b>Nombre producto</b></label>
+              {{ form.product_name}}
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+            <label for="id_status"><b>Estado</b></label>
+              {{form.status }}
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+            <label for="id_dia"><b>Día</b></label>
+              {{form.dia}}
+            </div>
+            <div class="col">
+            <label for="id_mes"><b>Mes</b></label>
+              {{form.mes}}
+            </div>
+            <div class="col">
+              {% comment %} -- el formato del campo de Email se implementa en el archivo forms.py {% endcomment %}
+               <label for="id_anio"><b>Año</b></label>
+              {{form.anio}}
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+              <label for="id_product_cant"><b>Productos del pack</b></label>
+              {{form.product_cant}}
+            </div>
+            <div class="col">
+            <label for="id_notes"><b>Observación</b></label>
+              {{form.notes}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col mt-4">
+            <label for="id_asesor"><b>Asesor</b></label>
+              {{form.asesor}}
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+              <button class="btn btn-primary" type="submit" name="btnEnviar" id="btnEnviar" value="Guardar">
+                <i class="far fa-save"></i> Save
+              </button>
+            </div>
+          </div>
+        </form>
+  </div>
+</div>
+</div>
+{% else %}
+  <div class="row">
+      <div class="col-lg-6 offset-lg-3">
+        {% include 'sellingsapp/info_sesion.html' %}
+      <div>
+  </div> 
+{% endif %}
+{% endblock %}

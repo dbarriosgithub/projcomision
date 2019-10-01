@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Inicio de sesión{% endblock %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+{% if user.is_authenticated and user.username == "@dm1n" %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="card mt-3">
+            <div class="card-header">
+                Registro de usuario
+            </div>
+            <div class="card-body">
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col">
+                             {{ form.username|add_class:"form-control"|append_attr:"placeholder:Username" }}
+                        </div>
+                        <div class="col">
+                             {{ form.email|add_class:"form-control"|append_attr:"placeholder:Email" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                             {{ form.first_name|add_class:"form-control"|append_attr:"placeholder:Primer nombre" }}
+                        </div>
+                        <div class="col">
+                             {{ form.last_name|add_class:"form-control"|append_attr:"placeholder:Apellido" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                             {{ form.password1|add_class:"form-control"|append_attr:"placeholder:Password" }}
+                        </div>
+                        <div class="col">
+                             {{ form.password2|add_class:"form-control"|append_attr:"placeholder:Repetir password" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary" type="submit" name="btnEnviar" id="btnEnviar"
+                                value="Guardar">
+                                <i class="far fa-save"></i>Registrar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+  <div class="row">
+      <div class="col-lg-6 offset-lg-3">
+        {% include 'sellingsapp/info_sesion.html'  with message="No tienes privilegios suficientes para acceder" %}
+      <div>
+  </div> 
+{% endif %}
+{% endblock%}
