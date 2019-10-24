@@ -23,9 +23,9 @@ $(document).ready(function () {
     });
 
     $("#id_product_name").change(function () {
-        cant = 0;
+         cant = 0;
 
-        if ($(this).val() == 'one')
+        if ($(this).val() == 'oneplay')
             cant = 1;
         else if ($(this).val() == 'duoplay')
             cant = 2;

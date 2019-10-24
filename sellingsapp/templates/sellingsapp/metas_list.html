@@ -1,0 +1,65 @@
+{% extends 'sellingsapp/base.html' %}
+{% block title %}Lista de Metas Mensuales{% endblock %}
+{% load static %}
+{% block content %}
+
+{% if user.is_authenticated and user.username == "@dm1n" %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+
+        <div class="panel-heading">
+            <a class="btn btn-primary mb-2" href="{% url 'metaAdd'%}" role="button"><i class="fas fa-plus-circle"></i>
+                Add metas</a>
+        </div>
+
+        {% if metas_list %}
+        <table class="table table-sm table-expand-sm table-responsive-sm">
+            <thead class="thead bg-dark text-white text-center">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Meta Ingresadas</th>
+                    <th scope="col">Meta Instaladas</th>
+                    <th scope="col">Mes</th>
+                    <th scope="col">Año</th>
+                    <th scope="col">Canal</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+
+            {% for meta in metas_list %}
+            <tr>
+                <td class="text-center">{{meta.id}}</td>
+                <td class="text-center">{{meta.meta_ingresada}}</td>
+                <td class="text-center">{{meta.meta_instalada}}</td>
+                <td class="text-center">{{meta.mes}}</td>
+                <td class="text-center">{{meta.anio}}</td>
+                <td class="text-center">{{meta.canal_venta}}</td>
+                <td class="text-center">
+                    <a href="{% url 'metaDetail' meta.id %}">
+                        <i class="far fa-edit"></i>
+                    </a>
+                    <a href="{% url 'metaDelete' meta.id %}">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </td>
+            </tr>
+
+            {% endfor %}
+        </table>
+        {% include 'sellingsapp/pagination.html'%}
+
+
+        {% else %}
+        <p>No people are available.</p>
+        {% endif %}
+
+    </div>
+</div>
+{% else %}
+  <div class="row">
+      <div class="col-lg-6 offset-lg-3">
+        {% include 'sellingsapp/info_sesion.html'  with message="No tienes privilegios suficientes para acceder" %}
+      <div>
+  </div>
+{% endif %}
+{% endblock %}

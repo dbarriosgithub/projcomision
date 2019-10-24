@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'sellingsapp/base.html' %}
 {% block title %}Inicio de sesión{% endblock %}
 {% load static %}
 {% load widget_tweaks %}
 {% block content %}
-{% if user.is_authenticated and user.username == "@dm1n" %}
+
 <div class="row">
     <div class="col-lg-6 offset-lg-3">
         <div class="card mt-3">
@@ -53,11 +53,4 @@
         </div>
     </div>
 </div>
-{% else %}
-  <div class="row">
-      <div class="col-lg-6 offset-lg-3">
-        {% include 'sellingsapp/info_sesion.html'  with message="No tienes privilegios suficientes para acceder" %}
-      <div>
-  </div> 
-{% endif %}
 {% endblock%}

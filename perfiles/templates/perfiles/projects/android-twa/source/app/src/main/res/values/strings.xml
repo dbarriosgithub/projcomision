@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Bienvenido</string>
+    <string name="app_url">https://dbarrios.pythonanywhere.com/</string>
+    <string name="app_host">dbarrios.pythonanywhere.com/</string>
+</resources>

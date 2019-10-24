@@ -20,6 +20,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+   # url(r'^charcha-serviceworker(.*.js)$', views.charcha_serviceworker, name='charcha_serviceworker'),
     path('', include('sellingsapp.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^$', BienvenidaView.as_view(), name='bienvenida'),

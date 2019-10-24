@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'sellingsapp/base.html' %}
 
 {% block title %}Bienvenido{% endblock %}
 
@@ -10,7 +10,7 @@
             <h1 class="display-11">Usuario conectado: {{ user.username }}!</h1>
             <hr class="my-4">
             <a class="btn btn-primary btn-lg" href="{% url 'sign_out' %}" role="button">Cerrar sesión</a>
-        </div> 
+        </div>
     {% else %}
         <div class="jumbotron">
             <h2 class="display-11">No tienes una sesión activa!</h2>
@@ -18,8 +18,8 @@
             <hr class="my-4">
             <p>Haz click en iniciar sesión.</p>
             <a class="btn btn-primary btn-lg" href="{% url 'sign_in' %}" role="button">Iniciar sesión</a>
-        </div> 
-     {% endif %}      
-  </div>   
+        </div>
+     {% endif %}
+  </div>
 </div>
 {% endblock content %}

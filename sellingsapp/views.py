@@ -2,10 +2,16 @@ from time import gmtime, strftime
 from django.shortcuts import render, HttpResponse, get_object_or_404, redirect, render_to_response
 from django.urls import reverse_lazy
 from django.contrib import messages
+
 from .models import Person
 from .models import Solicitud
+from .models import Metas
+
 from .forms import PersonForm
 from .forms import SolicitudForm
+from .forms import MetaForm
+
+
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
 from django.views.generic import CreateView
@@ -19,7 +25,7 @@ class personIndex(ListView):
     model = Person
     template_name = 'sellingsapp/person_list.html'
     context_object_name = 'person_list'
-    paginate_by = 2
+    paginate_by = 7
     ordering = ['id']
     # def get_queryset(self):
     #     return Person.objects.filter(id!='')
@@ -131,7 +137,7 @@ class solicitudIndex(ListView):
     model = Solicitud
     template_name = 'sellingsapp/solicitud_list.html'
     context_object_name = 'solicitud_list'
-    paginate_by = 2
+    paginate_by = 7
     ordering = ['product_name']
 
     def get_queryset(self):
@@ -164,6 +170,7 @@ class solicitudIndex(ListView):
 
 
 def proyectionIndex(request):
+
     model = Solicitud
     template_name = 'sellingsapp/proyection_list.html'
     context_object_name = 'proyection_list'
@@ -171,6 +178,9 @@ def proyectionIndex(request):
     today = date.today()
     search_mes = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
                   "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+
+    if request.user.is_anonymous == True:
+        return redirect('sign_out')
 
     if (request.user.get_username() == "@dm1n" or request.user.get_username() == "supervis@r"):
         search_cc_id = request.GET.get('search_cc_id')
@@ -188,7 +198,6 @@ def proyectionIndex(request):
             search_email, search_mes[today.month-1], today.day, 'solicitado')
         cant_instaladas = proyectionReview(
             search_email, search_mes[today.month-1], today.day, 'instalado')
-
     else:
         result = {}
         return render(request, template_name, result)
@@ -197,14 +206,60 @@ def proyectionIndex(request):
 
     dias_transcurridos = validDays("")-1
 
+    tot_ingresadas =  cant_solicitadas+cant_instaladas
+
     if dias_transcurridos==0:
-        dias_transcurridos=1;
+        proyeccion_ingresadas=0
+        proyeccion_instaladas=0
+    else:
+        proyeccion_ingresadas = ((cant_solicitadas+cant_instaladas)/dias_transcurridos)*dias_habiles
+        proyeccion_instaladas = (cant_instaladas/dias_transcurridos)*dias_habiles
+    
+    metaObjFVD = getMeta(search_mes[today.month-1],today.year,'FVD')
+    metaObjCU = getMeta(search_mes[today.month-1],today.year,'CU')
 
-    proyeccion_ingresadas = (
-        (cant_solicitadas+cant_instaladas)/dias_transcurridos)*dias_habiles
-    proyeccion_instaladas = (cant_instaladas/dias_transcurridos)*dias_habiles
+    
+    if (metaObjFVD.exists()==True):
+        meta_ingresadasFVD = metaObjFVD[0].meta_ingresada
+        meta_instaladasFVD = metaObjFVD[0].meta_instalada
+        porc_meta_ingresadasFVD = (proyeccion_ingresadas/meta_ingresadasFVD)*100
+        porc_meta_instaladasFVD = (proyeccion_instaladas/meta_instaladasFVD)*100
+    else:
+        meta_ingresadasFVD = 0
+        meta_instaladasFVD = 0
+        porc_meta_ingresadasFVD=0
+        porc_meta_instaladasFVD=0
 
-    return render(request, template_name, {"proyeccion_ingre": proyeccion_ingresadas, "proyeccion_instal": proyeccion_instaladas})
+
+    if (metaObjCU.exists()==True):
+        meta_ingresadasCU = metaObjCU[0].meta_ingresada
+        meta_instaladasCU = metaObjCU[0].meta_instalada
+        porc_meta_ingresadasCU = (proyeccion_ingresadas/meta_ingresadasCU)*100
+        porc_meta_instaladasCU = (proyeccion_instaladas/meta_instaladasCU)*100
+    else:
+        meta_ingresadasCU = 0
+        meta_instaladasCU = 0
+        porc_meta_ingresadasCU=0
+        porc_meta_instaladasCU=0
+
+
+
+    return render(request, template_name,
+        {"dias_habiles": dias_habiles,
+         "dias_transcurridos": dias_transcurridos,
+         "cant_instaladas": cant_instaladas,
+         "cant_solicitadas": tot_ingresadas,
+         "proyeccion_ingre": format(proyeccion_ingresadas,".2f"),
+         "proyeccion_instal": format(proyeccion_instaladas,".2f"),
+         "meta_ingresadasFVD": meta_ingresadasFVD,
+         "meta_instaladasFVD": meta_instaladasFVD,
+         "porc_meta_ingresadasFVD": format(porc_meta_ingresadasFVD,".2f"),
+         "porc_meta_instaladasFVD": format(porc_meta_instaladasFVD,".2f"),
+         "meta_ingresadasCU": meta_ingresadasCU,
+         "meta_instaladasCU": meta_instaladasCU,
+         "porc_meta_ingresadasCU":format(porc_meta_ingresadasCU,".2f"),
+         "porc_meta_instaladasCU":format(porc_meta_instaladasCU,".2f"),
+         })
 
 # ------------------------------------------------------------------------
 #       Calcula la proyección de cada asesor
@@ -260,11 +315,9 @@ def validDays(finalday):
 # -----------------------------------------------------------------------
 #      Función que verifica si el día es feriado
 # -----------------------------------------------------------------------
-
-
 def isHoliday(dia):
     formato = '%d/%m/%Y'
-    hollidays = '[{"feriado":"05/10/2019"},{"feriado":"08/10/2019"},{"feriado": "09/10/2019"}, {"feriado": "07/10/2019"}]'
+    hollidays = '[{"feriado":"14/10/2019"}]'
     dias_feriados = json.loads(hollidays)
 
     for value in dias_feriados:
@@ -272,7 +325,6 @@ def isHoliday(dia):
             return True
 
     return False
-
 
 # -----------------------------------------------------------------------
 #       Función que obtien el último día del mes
@@ -285,15 +337,28 @@ def lastDayMonth():
     return lastDate
 
 # -----------------------------------------------------------------------
+#  función para verificar si ya existe la meta resgistrada
+# -------------------------------------------------------------------------
+def getMeta(mes_meta,anio_meta,canal_venta):
+  #TODO mejorar código
+    try:
+        sql_query = "mes='"+mes_meta+"' and anio='" +str(anio_meta) +"' and canal_venta='"+canal_venta+"'"
+        result = Metas.objects.extra(where=[sql_query])
+    except Metas.DoesNotExist:
+        result = []
+
+    return result
+
+
+
+# -----------------------------------------------------------------------
 #       Clase ListView que utiliza filter para búsqueda personalizada
 # -----------------------------------------------------------------------
-
-
 class searchSolicitud(ListView):
     model = Solicitud
     template_name = 'sellingsapp/solicitud_list.html'
     context_object_name = 'solicitud_list'
-    paginate_by = 3
+    paginate_by = 7
     ordering = ['product_name']
 
     def get_queryset(self):
@@ -328,7 +393,6 @@ class searchSolicitud(ListView):
 
         return result
 
-
 # -------------------------------------------------------------------------
 #             Auto-complete del campo de búsqueda de campañas
 #  ------------------------------------------------------------------------
@@ -360,22 +424,23 @@ def autoCompleteSearchSolicitud(request):
 #                Utiliza una función para la view
 # -----------------------------------------------------------------------
 def solicitudAdd(request):
+
+    if request.user.is_anonymous == True:
+        return redirect('sign_out')
+
     if request.method == 'POST':
         form = SolicitudForm(request.POST)
-
-        if form.is_valid():
-            solicitud = form.save(commit=False)
-            solicitud.product_name = request.POST['product_name']
-            solicitud.status = request.POST['status']
-            solicitud.dia = request.POST['dia']
-            solicitud.mes = request.POST['mes']
-            solicitud.anio = request.POST['anio']
-            solicitud.product_cant = request.POST['product_cant']
-            solicitud.notes = request.POST['notes']
-            solicitud.asesor = Person.objects.get(id=request.POST['asesor'])
-            solicitud.save()
-            messages.success(request, 'El registro ha sido ingresado.')
-            form = SolicitudForm()
+        solicitud = form.save(commit=False)
+        solicitud.product_name = request.POST['product_name']
+        solicitud.status = request.POST['status']
+        solicitud.dia = request.POST['dia']
+        solicitud.mes = request.POST['mes']
+        solicitud.anio = request.POST['anio']
+        solicitud.product_cant = request.POST['product_cant']
+        solicitud.notes = request.POST['notes']
+        solicitud.asesor = Person.objects.get(id=request.POST['asesor'])
+        solicitud.save()
+        messages.success(request, 'El registro ha sido ingresado.')
     else:
         form = SolicitudForm(request)
 
@@ -440,4 +505,70 @@ def solicitudDelete(request, id_solicitud):
 
     return redirect('solicitudList')
 
-# Create your views here.
+
+def metaAdd(request):
+    if request.method == 'POST':
+        form = MetaForm(request.POST)
+        if form.is_valid():
+            if (getMeta(request.POST['mes'],request.POST['anio'],request.POST['canal_venta']).exists()==False):
+                meta = form.save(commit=False)
+                meta.meta_ingresada = request.POST['meta_ingresada']
+                meta.meta_instalada = request.POST['meta_instalada']
+                meta.mes = request.POST['mes']
+                meta.anio = request.POST['anio']
+                meta.canal_venta = request.POST['canal_venta']
+                meta.save()
+                messages.success(request, 'El registro ha sido ingresado!.')
+                form = MetaForm()
+            else:
+                messages.error(request, 'Ya existe una meta para el mes indicado!.')
+
+
+    else:
+        form = MetaForm()
+
+    return render(request, 'sellingsapp/metas_add.html', {'form': form})
+
+class metaIndex(ListView):
+    model = Metas
+    template_name = 'sellingsapp/metas_list.html'
+    context_object_name = 'metas_list'
+    paginate_by = 7
+    ordering = ['id']
+
+
+class metaDetail(UpdateView):
+    model = Metas
+    fields = ['id', 'meta_ingresada', 'meta_instalada',
+              'mes', 'anio', 'canal_venta']
+    template_name = 'sellingsapp/metas_detail.html'
+
+    def form_valid(self, form):
+        meta = form.save(commit=False)
+        objMeta = getMeta(meta.mes,meta.anio,meta.canal_venta)
+
+        if (objMeta.exists()==True):
+            if (objMeta[0].id == meta.id):
+                meta.save()
+                messages.success(self.request, 'El registro ha sido actualizado!.')
+            else:
+                messages.error(self.request, 'Ya existe una meta para el mes indicado!.')
+        else:
+            meta.save()
+            messages.success(self.request, 'El registro ha sido actualizado!.')
+
+
+
+        return self.render_to_response(self.get_context_data(form=form))
+
+def metaDelete(request, id_meta):
+    # busca el modelo idenficado por el id
+    meta_delete = get_object_or_404(Metas, pk=id_meta)
+    meta_delete.delete()
+    custom_message = " | "+meta_delete.mes + \
+        " " + str(meta_delete.anio) + " | "
+    messages.success(request, "El registro " + str(id_meta) +
+                     "-" + custom_message+" ha sido eliminado")
+
+    return redirect('metaList')
+

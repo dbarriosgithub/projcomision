@@ -1,0 +1,21 @@
+{
+    "dir": "ltr",
+    "lang": "en",
+    "name": "Bienvenido",
+    "scope": "/",
+    "display": "browser",
+    "start_url": "https://dbarrios.pythonanywhere.com/",
+    "short_name": "Bienvenido",
+    "theme_color": "transparent",
+    "description": "",
+    "orientation": "any",
+    "background_color": "transparent",
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "https://dbarrios.pythonanywhere.com/static/sellingsapp/images/favicon.ico",
+            "sizes": "36x36"
+        }
+    ]
+}

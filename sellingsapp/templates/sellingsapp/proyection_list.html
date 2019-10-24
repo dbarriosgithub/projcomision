@@ -1,5 +1,5 @@
 {% extends 'sellingsapp/base.html' %}
-{% block title %}Lista de Campañas{% endblock %}
+{% block title %}Proyección de ventas{% endblock %}
 {% load static %}
 {% block content %}
 
@@ -17,9 +17,9 @@
                                     <label class="fa fa-search"></label>
                                 </span>
                             </div>
-                            <input id="search_cc_id" name="search_cc_id" value="{{request.GET.search_cc_id}}" type="text"
-                                class="form-control" placeholder="# Identificación" aria-label="search_cc_id"
-                                aria-describedby="basic-addon1">
+                            <input id="search_cc_id" name="search_cc_id" value="{{request.GET.search_cc_id}}"
+                                type="text" class="form-control" placeholder="# Identificación"
+                                aria-label="search_cc_id" aria-describedby="basic-addon1">
                         </div>
                     </form>
                 </div>
@@ -28,23 +28,81 @@
 
         <div class="jumbotron">
             {% if proyeccion_ingre %}
-                <h4 class="display-11">Proyección ingresadas  </h4>
-                <p class="lead">{{proyeccion_ingre}}</p>
-                <h4 class="display-11">Proyección instaladas  </h4>
-                <p class="lead">{{proyeccion_instal}}</p>
-                <hr class="my-4">
+            <h4 class="display-11">Proyección ingresadas</h4>
+            <p class="lead">{{proyeccion_ingre}}</p>
+            <h4 class="display-11">Proyección instaladas</h4>
+            <p class="lead">{{proyeccion_instal}}</p>
+            <hr class="my-4">
+
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"
+                                aria-expanded="true" aria-controls="collapseOne">
+                                % Metas canal FVD
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <h5 class="display-11">% Meta ingresadas FVD</h5>
+                            <p class="lead">{{porc_meta_ingresadasFVD}}</p>
+                            <h5 class="display-11">% Meta instaladas FVD</h5>
+                            <p class="lead">{{porc_meta_instaladasFVD}}</p>
+                            <h5 class="display-11">Meta ingresadas</h5>
+                            <p class="lead">{{meta_ingresadasFVD}}</p>
+                            <h5 class="display-11">Meta instaladas</h5>
+                            <p class="lead">{{meta_instaladasFVD}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                                aria-expanded="false" aria-controls="collapseTwo">
+                                % Metas canal CU
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div class="card-body">
+                          <h5 class="display-11">% Meta ingresadas CU</h5>
+                          <p class="lead">{{porc_meta_ingresadasCU}}</p>
+                          <h5 class="display-11">% Meta instaladas CU</h5>
+                          <p class="lead">{{porc_meta_instaladasCU}}</p>
+                          <h5 class="display-11">Meta ingresadas</h5>
+                          <p class="lead">{{meta_ingresadasCU}}</p>
+                          <h5 class="display-11">Meta instaladas</h5>
+                          <p class="lead">{{meta_instaladasCU}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <h5 class="display-11">Cantidad ingresadas</h5>
+            <p class="lead">{{cant_solicitadas}}</p>
+            <h5 class="display-11">Cantidad instaladas</h5>
+            <p class="lead">{{cant_instaladas}}</p>
+            <h5 class="display-11">Días transcurridos</h5>
+            <p class="lead">{{dias_transcurridos}}</p>
+            <h5 class="display-11">Días hábiles</h5>
+            <p class="lead">{{dias_habiles}}</p>
+            <hr class="my-4">
             {% else %}
-                <p class="lead">No se han encontrado proyecciones para este usuario</p>
-                <hr class="my-4">
-            {% endif %} 
-        </div> 
+            <p class="lead">No se han encontrado proyecciones para este usuario</p>
+            <hr class="my-4">
+            {% endif %}
+        </div>
     </div>
 </div>
 {% else %}
-  <div class="row">
-      <div class="col-lg-6 offset-lg-3">
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
         {% include 'sellingsapp/info_sesion.html' %}
-      <div>
-  </div> 
-{% endif %}
-{% endblock %}
+        <div>
+        </div>
+        {% endif %}
+        {% endblock %}

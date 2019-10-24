@@ -1,5 +1,5 @@
 {% extends 'sellingsapp/base.html' %}
-{% block title %}Registrar información campaña{% endblock %}
+{% block title %}Registrar venta{% endblock %}
 {% load static %}
 {% block content %}
 {% if user.is_authenticated %}
@@ -9,10 +9,10 @@
   <div class="col-lg-6 offset-lg-3">
     <div class="card mt-3 mb-3">
       <div class="card-header">
-        Add Solicitud 
+        Add Venta
       </div>
       <div class="card-body">
-     
+
         <form method="POST" class="post-form">
           {% csrf_token %}
           <div class="row">
@@ -41,7 +41,7 @@
             <div class="col">
               {% comment %} -- el formato del campo de Email se implementa en el archivo forms.py {% endcomment %}
                <label for="id_anio"><b>Año</b></label>
-             
+
               {{form.anio}}
             </div>
           </div>
@@ -71,7 +71,7 @@
             </div>
           </div>
         </form>
-      
+
       </div>
     </div>
   </div>
@@ -81,6 +81,6 @@
       <div class="col-lg-6 offset-lg-3">
         {% include 'sellingsapp/info_sesion.html' %}
       <div>
-  </div> 
+  </div>
 {% endif %}
 {% endblock %}

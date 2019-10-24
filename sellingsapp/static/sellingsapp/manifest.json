@@ -1,0 +1,41 @@
+{
+    "lang" : "en",
+    "name" : "SALES TRACKING",
+    "scope" : "/static/sellingsapp/index.html",
+    "display" : "fullscreen",
+    "start_url" : "https://dbarrios.pythonanywhere.com/static/sellingsapp/index.html",
+    "short_name" : "SALES TRACKING",
+    "theme_color" : "transparent",
+    "orientation" : "natural",
+    "background_color" : "#013579",
+    "icons" : [
+        {
+            "src": "https://dbarrios.pythonanywhere.com/static/sellingsapp/images/favicon.ico",
+            "sizes": "36x36"
+        },
+        {
+            "src": "https://dbarrios.pythonanywhere.com/static/sellingsapp/images/icon-48x48.png",
+            "sizes": "48x48"
+        },
+        {
+            "src": "https://dbarrios.pythonanywhere.com/static/sellingsapp/images/icon-72x72.png",
+            "sizes": "72x72"
+        },
+        {
+            "src": "https://dbarrios.pythonanywhere.com/static/sellingsapp/images/icon-96x96.png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "https://dbarrios.pythonanywhere.com/static/sellingsapp/images/icon-144x144.png",
+            "sizes": "144x144"
+        },
+        {
+            "src": "https://dbarrios.pythonanywhere.com/static/sellingsapp/images/icon-192x192.png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "https://dbarrios.pythonanywhere.com/static/sellingsapp/images/icon-512x512.png",
+            "sizes": "512x512"
+        }
+
+    ]}

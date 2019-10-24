@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Textarea
 from .models import Person
-from .models import Solicitud
+from .models import Solicitud,Metas
 from django.forms import ModelChoiceField
 
 
@@ -15,6 +15,21 @@ class PersonForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+        }
+
+
+class MetaForm(forms.ModelForm):
+
+    class Meta:
+        model = Metas
+        fields = ('meta_ingresada', 'meta_instalada', 'mes',
+                  'anio', 'canal_venta')
+        widgets = {
+            'meta_ingresada': forms.NumberInput(attrs={'class': 'form-control'}),
+            'meta_instalada': forms.NumberInput(attrs={'class': 'form-control'}),
+            'mes': forms.Select(attrs={'class': 'form-control'}),
+            'anio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Año'}),
+            'canal_venta': forms.Select(attrs={'class': 'form-control'}),
         }
 
 # --------------------------------------------------------------
