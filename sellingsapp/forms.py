@@ -10,11 +10,13 @@ class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
         fields = ('cc_id', 'first_name', 'last_name',
-                  'address', 'email', 'celphone')
+                  'address', 'email', 'celphone','canal_de_venta')
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'celphone': forms.NumberInput(attrs={'class': 'form-control'}),
+            'canal_de_venta': forms.Select(attrs={'class': 'form-control'}),
         }
 
 

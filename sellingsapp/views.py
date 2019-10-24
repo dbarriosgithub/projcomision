@@ -52,6 +52,7 @@ def personAdd(request):
             person.celphone = request.POST['celphone']
             person.address = request.POST['address']
             person.email = request.POST['email']
+            person.canal_de_venta = request.POST['canal_de_venta']
             person.save()
             messages.success(request, 'El registro ha sido ingresado.')
             form = PersonForm()
@@ -64,7 +65,7 @@ def personAdd(request):
 class personDetail(UpdateView):
     model = Person
     fields = ['cc_id', 'first_name', 'last_name',
-              'celphone', 'address', 'email']
+              'celphone', 'address', 'email','canal_de_venta']
     template_name = 'sellingsapp/person_detail.html'
 
     def form_valid(self, form):
@@ -214,35 +215,24 @@ def proyectionIndex(request):
     else:
         proyeccion_ingresadas = ((cant_solicitadas+cant_instaladas)/dias_transcurridos)*dias_habiles
         proyeccion_instaladas = (cant_instaladas/dias_transcurridos)*dias_habiles
-    
-    metaObjFVD = getMeta(search_mes[today.month-1],today.year,'FVD')
-    metaObjCU = getMeta(search_mes[today.month-1],today.year,'CU')
+
+
+
+    if (ObjPerson):
+        canal = ObjPerson.canal_de_venta
+        metaObj = getMeta(search_mes[today.month-1],today.year,canal)
 
     
-    if (metaObjFVD.exists()==True):
-        meta_ingresadasFVD = metaObjFVD[0].meta_ingresada
-        meta_instaladasFVD = metaObjFVD[0].meta_instalada
-        porc_meta_ingresadasFVD = (proyeccion_ingresadas/meta_ingresadasFVD)*100
-        porc_meta_instaladasFVD = (proyeccion_instaladas/meta_instaladasFVD)*100
+    if (metaObj.exists()==True and dias_transcurridos!=0):
+        meta_ingresadas = metaObj[0].meta_ingresada
+        meta_instaladas = metaObj[0].meta_instalada
+        porc_meta_ingresadas = (proyeccion_ingresadas/meta_ingresadas)*100
+        porc_meta_instaladas = (proyeccion_instaladas/meta_instaladas)*100
     else:
-        meta_ingresadasFVD = 0
-        meta_instaladasFVD = 0
-        porc_meta_ingresadasFVD=0
-        porc_meta_instaladasFVD=0
-
-
-    if (metaObjCU.exists()==True):
-        meta_ingresadasCU = metaObjCU[0].meta_ingresada
-        meta_instaladasCU = metaObjCU[0].meta_instalada
-        porc_meta_ingresadasCU = (proyeccion_ingresadas/meta_ingresadasCU)*100
-        porc_meta_instaladasCU = (proyeccion_instaladas/meta_instaladasCU)*100
-    else:
-        meta_ingresadasCU = 0
-        meta_instaladasCU = 0
-        porc_meta_ingresadasCU=0
-        porc_meta_instaladasCU=0
-
-
+        meta_ingresadas = 0
+        meta_instaladas = 0
+        porc_meta_ingresadas=0
+        porc_meta_instaladas=0
 
     return render(request, template_name,
         {"dias_habiles": dias_habiles,
@@ -251,14 +241,11 @@ def proyectionIndex(request):
          "cant_solicitadas": tot_ingresadas,
          "proyeccion_ingre": format(proyeccion_ingresadas,".2f"),
          "proyeccion_instal": format(proyeccion_instaladas,".2f"),
-         "meta_ingresadasFVD": meta_ingresadasFVD,
-         "meta_instaladasFVD": meta_instaladasFVD,
-         "porc_meta_ingresadasFVD": format(porc_meta_ingresadasFVD,".2f"),
-         "porc_meta_instaladasFVD": format(porc_meta_instaladasFVD,".2f"),
-         "meta_ingresadasCU": meta_ingresadasCU,
-         "meta_instaladasCU": meta_instaladasCU,
-         "porc_meta_ingresadasCU":format(porc_meta_ingresadasCU,".2f"),
-         "porc_meta_instaladasCU":format(porc_meta_instaladasCU,".2f"),
+         "meta_ingresadas": meta_ingresadas,
+         "meta_instaladas": meta_instaladas,
+         "porc_meta_ingresadas": format(porc_meta_ingresadas,".2f"),
+         "porc_meta_instaladas": format(porc_meta_instaladas,".2f"),
+         "canal":canal,
          })
 
 # ------------------------------------------------------------------------

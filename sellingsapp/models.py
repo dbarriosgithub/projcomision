@@ -42,6 +42,8 @@ class Person(models.Model):
     address = models.CharField(max_length=100)
     email = models.EmailField(max_length=45)
     celphone = models.CharField(max_length=30)
+    canal_de_venta = models.CharField(
+        max_length=20, choices=CANAL, default='FVD')
 
     def __str__(self):
         return self.first_name+" "+self.last_name
@@ -75,7 +77,7 @@ class Metas(models.Model):
         max_length=20, choices=MONTH_CHOICES, default='Enero')
     anio = models.IntegerField(default=2019)
     canal_venta = models.CharField(
-        max_length=20, choices=CANAL, default='FWD')
+        max_length=20, choices=CANAL, default='FVD')
 
 
    

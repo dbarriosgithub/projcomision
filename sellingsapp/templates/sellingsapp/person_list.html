@@ -22,6 +22,7 @@
                     <th scope="col">Address</th>
                     <th scope="col">Email</th>
                     <th scope="col">Celphone</th>
+                    <th scope="col">Canal</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -34,6 +35,8 @@
                 <td class="text-center">{{person.address}}</td>
                 <td class="text-center">{{person.email}}</td>
                 <td class="text-center">{{person.celphone}}</td>
+                <td class="text-center">{{person.canal_de_venta}}</td>
+
                 <td class="text-center">
                     <a href="{% url 'personDetail' person.id %}">
                         <i class="far fa-edit"></i>
