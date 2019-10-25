@@ -3,24 +3,29 @@ from django.shortcuts import render, HttpResponse, get_object_or_404, redirect, 
 from django.urls import reverse_lazy
 from django.contrib import messages
 
+# Importación de modelos
 from .models import Person
 from .models import Solicitud
 from .models import Metas
 
+# Importación de formularios
 from .forms import PersonForm
 from .forms import SolicitudForm
 from .forms import MetaForm
 
-
+# Importación de vistas basadas en clases
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
 from django.views.generic import CreateView
+
 from django.core.paginator import Paginator
 from datetime import datetime, timedelta, date
 import calendar
 import json
 
-
+# ----------------------------------------------------------------------------
+#   Vista basada en clase para listar las personas o vendedores registrados
+#-----------------------------------------------------------------------------
 class personIndex(ListView):
     model = Person
     template_name = 'sellingsapp/person_list.html'
@@ -41,7 +46,9 @@ class personIndex(ListView):
     # context = {'person_list': person_list}
     # return render(request, self.template_name, context)
 
-
+# ------------------------------------------------------------
+#       Método o función para crear una persona o vendedor
+#-------------------------------------------------------------
 def personAdd(request):
     if request.method == 'POST':
         form = PersonForm(request.POST)
@@ -62,6 +69,10 @@ def personAdd(request):
     return render(request, 'sellingsapp/person_add.html', {'form': form})
 
 
+# ------------------------------------------------------------
+#       Vista basada en clase que utiliza la clase UpdateView
+#       para editar una persona o vendendor
+#-------------------------------------------------------------
 class personDetail(UpdateView):
     model = Person
     fields = ['cc_id', 'first_name', 'last_name',
@@ -112,7 +123,9 @@ class personDetail(UpdateView):
     #     form = PersonForm(instance=person_detail)
     #     return render(request, 'sellingsapp/person_detail.html', {'form': form})
 
-
+# ---------------------------------------------------------
+#            Método que elimina una persona o vendedor
+#----------------------------------------------------------
 def personDelete(request, id_person):
     # busca el modelo idenficado por el id
     person_delete = get_object_or_404(Person, pk=id_person)
@@ -168,8 +181,6 @@ class solicitudIndex(ListView):
 # --------------------------------------------------------------------------------
 #       Utiliza la clase ListView para para crear una vista basada en clase
 # --------------------------------------------------------------------------------
-
-
 def proyectionIndex(request):
 
     model = Solicitud
@@ -183,26 +194,29 @@ def proyectionIndex(request):
     if request.user.is_anonymous == True:
         return redirect('sign_out')
 
+    query_person='' #Se establece un query para admin o usuario común
+
     if (request.user.get_username() == "@dm1n" or request.user.get_username() == "supervis@r"):
         search_cc_id = request.GET.get('search_cc_id')
 
         if search_cc_id!='':
-            try:
-                ObjPerson = Person.objects.get(cc_id=search_cc_id)
-                search_email = ObjPerson.email
-            except Person.DoesNotExist:
-                search_email = ""
+            query_person =  "Person.objects.get(cc_id=search_cc_id)"
         else:
             search_email=""
+
     else:
         search_email = request.user.email
+        query_person =  "Person.objects.get(email=search_email)"
 
+    # Buscamos el email asociado al cc_id o al usuario de la sesión
+    if query_person !='':
         try:
-            ObjPerson = Person.objects.get(email=search_email)
+            ObjPerson = eval(query_person)
+            search_email = ObjPerson.email
         except Person.DoesNotExist:
             search_email = ""
 
-
+    # Consultamos la cantidad de ventas realizadas (ingresadas e instaladas)
     if search_email != '' and search_email != None:
         cant_solicitadas = proyectionReview(
             search_email, search_mes[today.month-1], today.day, 'solicitado')
@@ -212,12 +226,12 @@ def proyectionIndex(request):
         result = {}
         return render(request, template_name, result)
 
+    # Obtenemos días hábiles,días transcurridos,y total de ventas
     dias_habiles = validDays(lastDayMonth())
-
     dias_transcurridos = validDays("")-1
-
     tot_ingresadas =  cant_solicitadas+cant_instaladas
 
+    # Calculamos la proyección de ventas ingresadas e instaladas
     if dias_transcurridos==0:
         proyeccion_ingresadas=0
         proyeccion_instaladas=0
@@ -225,10 +239,13 @@ def proyectionIndex(request):
         proyeccion_ingresadas = ((cant_solicitadas+cant_instaladas)/dias_transcurridos)*dias_habiles
         proyeccion_instaladas = (cant_instaladas/dias_transcurridos)*dias_habiles
 
-        canal = ObjPerson.canal_de_venta
-        metaObj = getMeta(search_mes[today.month-1],today.year,canal)
+    # Consultamos el canal de venta del Usuario indicado
+    canal = ObjPerson.canal_de_venta
 
-    
+    # Consultamos la meta definida para el mes
+    metaObj = getMeta(search_mes[today.month-1],today.year,canal)
+
+    # calculamos el porcentaje de ventas ingresadas e instaladas con respecto a la meta
     if (metaObj.exists()==True and dias_transcurridos!=0 and metaObj[0].meta_ingresada!=0 and metaObj[0].meta_instalada!=0):
         meta_ingresadas = metaObj[0].meta_ingresada
         meta_instaladas = metaObj[0].meta_instalada
@@ -239,6 +256,7 @@ def proyectionIndex(request):
         meta_instaladas = 0
         porc_meta_ingresadas=0
         porc_meta_instaladas=0
+
 
     return render(request, template_name,
         {"dias_habiles": dias_habiles,
@@ -257,8 +275,6 @@ def proyectionIndex(request):
 # ------------------------------------------------------------------------
 #       Calcula la proyección de cada asesor
 # -----------------------------------------------------------------------
-
-
 def proyectionReview(user_email, mes, dia, status):
     tot_status = 0
     try:
@@ -332,7 +348,7 @@ def lastDayMonth():
 #  función para verificar si ya existe la meta resgistrada
 # -------------------------------------------------------------------------
 def getMeta(mes_meta,anio_meta,canal_venta):
-  #TODO mejorar código
+
     try:
         sql_query = "mes=%s and anio=%s and canal_venta=%s"
         result = Metas.objects.extra(where=[sql_query],params=[mes_meta,anio_meta,canal_venta])
@@ -495,7 +511,9 @@ def solicitudDelete(request, id_solicitud):
 
     return redirect('solicitudList')
 
-
+# ---------------------------------------------------------------------------
+#       Funcion para registrar una nueva Meta para diferente canal de venta
+#----------------------------------------------------------------------------
 def metaAdd(request):
     if request.method == 'POST':
         form = MetaForm(request.POST)
@@ -522,6 +540,9 @@ def metaAdd(request):
 
     return render(request, 'sellingsapp/metas_add.html', {'form': form})
 
+# ---------------------------------------------------------
+#   Vista basada en clase para listar las metas de venta
+# ------------------------------------------------------------
 class metaIndex(ListView):
     model = Metas
     template_name = 'sellingsapp/metas_list.html'
@@ -529,7 +550,9 @@ class metaIndex(ListView):
     paginate_by = 7
     ordering = ['id']
 
-
+# -----------------------------------------------------------
+#   Vista basada en clase para Editar las metas de venta
+# ------------------------------------------------------------
 class metaDetail(UpdateView):
     model = Metas
     fields = ['id', 'meta_ingresada', 'meta_instalada',
@@ -544,8 +567,8 @@ class metaDetail(UpdateView):
 
             if (objMeta.exists()==True):
                 if (objMeta[0].id == meta.id):
-                        meta.save()
-                        messages.success(self.request, 'El registro ha sido actualizado!.')
+                    meta.save()
+                    messages.success(self.request, 'El registro ha sido actualizado!.')
                 else:
                     messages.error(self.request, 'Ya existe una meta para el mes indicado!.')
             else:
@@ -555,9 +578,12 @@ class metaDetail(UpdateView):
             messages.error(self.request, 'Las metas no pueden tener un valor  = 0 (cero)!.')
 
 
-
         return self.render_to_response(self.get_context_data(form=form))
 
+
+# ------------------------------------------------------------
+#       Función para eliminar las metas registradas
+# ------------------------------------------------------------
 def metaDelete(request, id_meta):
     # busca el modelo idenficado por el id
     meta_delete = get_object_or_404(Metas, pk=id_meta)

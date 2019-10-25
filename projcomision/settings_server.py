@@ -39,9 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sellingsapp',
     'perfiles',
-    'django_filters',
-    'bootstrap',
-    'fontawesome',
+    #'django_filters',
+    #'bootstrap',
+    #'fontawesome',
     'widget_tweaks',
 ]
 
