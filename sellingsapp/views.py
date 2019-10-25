@@ -186,13 +186,22 @@ def proyectionIndex(request):
     if (request.user.get_username() == "@dm1n" or request.user.get_username() == "supervis@r"):
         search_cc_id = request.GET.get('search_cc_id')
 
-        try:
-            ObjPerson = Person.objects.get(cc_id=search_cc_id)
-            search_email = ObjPerson.email
-        except Person.DoesNotExist:
-            search_email = ""
+        if search_cc_id!='':
+            try:
+                ObjPerson = Person.objects.get(cc_id=search_cc_id)
+                search_email = ObjPerson.email
+            except Person.DoesNotExist:
+                search_email = ""
+        else:
+            search_email=""
     else:
         search_email = request.user.email
+
+        try:
+            ObjPerson = Person.objects.get(email=search_email)
+        except Person.DoesNotExist:
+            search_email = ""
+
 
     if search_email != '' and search_email != None:
         cant_solicitadas = proyectionReview(
@@ -216,7 +225,6 @@ def proyectionIndex(request):
         proyeccion_ingresadas = ((cant_solicitadas+cant_instaladas)/dias_transcurridos)*dias_habiles
         proyeccion_instaladas = (cant_instaladas/dias_transcurridos)*dias_habiles
 
-    if (ObjPerson):
         canal = ObjPerson.canal_de_venta
         metaObj = getMeta(search_mes[today.month-1],today.year,canal)
 
@@ -260,9 +268,8 @@ def proyectionReview(user_email, mes, dia, status):
         return 0
 
     if user_email != '':
-        sql_query = "status='"+status+"' and asesor_id='" + \
-            str(asesor_id)+"' and mes='"+mes+"' and dia != '"+str(dia)+"'"
-        result = Solicitud.objects.extra(where=[sql_query])
+        sql_query = "status=%s and asesor_id=%s and mes=%s and dia != %s"
+        result = Solicitud.objects.extra(where=[sql_query],params=[status,asesor_id,mes,dia])
         for record in result:
             tot_status += record.product_cant
 
@@ -327,14 +334,12 @@ def lastDayMonth():
 def getMeta(mes_meta,anio_meta,canal_venta):
   #TODO mejorar código
     try:
-        sql_query = "mes='"+mes_meta+"' and anio='" +str(anio_meta) +"' and canal_venta='"+canal_venta+"'"
-        result = Metas.objects.extra(where=[sql_query])
+        sql_query = "mes=%s and anio=%s and canal_venta=%s"
+        result = Metas.objects.extra(where=[sql_query],params=[mes_meta,anio_meta,canal_venta])
     except Metas.DoesNotExist:
         result = []
 
     return result
-
-
 
 # -----------------------------------------------------------------------
 #       Clase ListView que utiliza filter para búsqueda personalizada
@@ -360,7 +365,7 @@ class searchSolicitud(ListView):
 
         if self.request.user.get_username() == '@dm1n':
             result = Solicitud.objects.extra(
-                where=[search_field+"='"+search_value+"'"])
+                where=[search_field+"= %s"],params=[search_value])
             return result
 
         try:
@@ -372,7 +377,7 @@ class searchSolicitud(ListView):
 
         if search_value != '':
             result = Solicitud.objects.extra(
-                where=[search_field+"='"+search_value+"' and asesor_id='"+str(asesor_id)+"'"])
+                where=[search_field+"=%s and asesor_id=%s"],params=[search_value,asesor_id])
         else:
             result = Solicitud.objects.filter(asesor_id=asesor_id)
 
