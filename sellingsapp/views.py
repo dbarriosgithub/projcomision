@@ -216,14 +216,12 @@ def proyectionIndex(request):
         proyeccion_ingresadas = ((cant_solicitadas+cant_instaladas)/dias_transcurridos)*dias_habiles
         proyeccion_instaladas = (cant_instaladas/dias_transcurridos)*dias_habiles
 
-
-
     if (ObjPerson):
         canal = ObjPerson.canal_de_venta
         metaObj = getMeta(search_mes[today.month-1],today.year,canal)
 
     
-    if (metaObj.exists()==True and dias_transcurridos!=0):
+    if (metaObj.exists()==True and dias_transcurridos!=0 and metaObj[0].meta_ingresada!=0 and metaObj[0].meta_instalada!=0):
         meta_ingresadas = metaObj[0].meta_ingresada
         meta_instaladas = metaObj[0].meta_instalada
         porc_meta_ingresadas = (proyeccion_ingresadas/meta_ingresadas)*100
@@ -499,17 +497,20 @@ def metaAdd(request):
         if form.is_valid():
             if (getMeta(request.POST['mes'],request.POST['anio'],request.POST['canal_venta']).exists()==False):
                 meta = form.save(commit=False)
-                meta.meta_ingresada = request.POST['meta_ingresada']
-                meta.meta_instalada = request.POST['meta_instalada']
-                meta.mes = request.POST['mes']
-                meta.anio = request.POST['anio']
-                meta.canal_venta = request.POST['canal_venta']
-                meta.save()
-                messages.success(request, 'El registro ha sido ingresado!.')
-                form = MetaForm()
+
+                if (meta.meta_ingresada!=0 and meta.meta_instalada!=0):
+                    meta.meta_ingresada = request.POST['meta_ingresada']
+                    meta.meta_instalada = request.POST['meta_instalada']
+                    meta.mes = request.POST['mes']
+                    meta.anio = request.POST['anio']
+                    meta.canal_venta = request.POST['canal_venta']
+                    meta.save()
+                    messages.success(request, 'El registro ha sido ingresado!.')
+                    form = MetaForm()
+                else:
+                    messages.error(request, 'Las metas no pueden tener un valor  = 0 (cero)!.')
             else:
                 messages.error(request, 'Ya existe una meta para el mes indicado!.')
-
 
     else:
         form = MetaForm()
@@ -534,15 +535,19 @@ class metaDetail(UpdateView):
         meta = form.save(commit=False)
         objMeta = getMeta(meta.mes,meta.anio,meta.canal_venta)
 
-        if (objMeta.exists()==True):
-            if (objMeta[0].id == meta.id):
+        if (meta.meta_ingresada!=0 and meta.meta_instalada!=0):
+
+            if (objMeta.exists()==True):
+                if (objMeta[0].id == meta.id):
+                        meta.save()
+                        messages.success(self.request, 'El registro ha sido actualizado!.')
+                else:
+                    messages.error(self.request, 'Ya existe una meta para el mes indicado!.')
+            else:
                 meta.save()
                 messages.success(self.request, 'El registro ha sido actualizado!.')
-            else:
-                messages.error(self.request, 'Ya existe una meta para el mes indicado!.')
         else:
-            meta.save()
-            messages.success(self.request, 'El registro ha sido actualizado!.')
+            messages.error(self.request, 'Las metas no pueden tener un valor  = 0 (cero)!.')
 
 
 
