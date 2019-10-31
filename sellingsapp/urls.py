@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.urls import path
 from . import views
-from .views import personIndex, personAdd, personDetail, solicitudIndex,searchSolicitud,solicitudDelete,solicitudAdd,solicitudDetail,metaAdd,metaIndex,metaDetail,metaDelete
+from .views import personIndex, personAdd, personDetail, solicitudIndex,searchSolicitud,solicitudDelete,solicitudAdd,solicitudDetail,metaAdd,metaIndex,metaDetail,metaDelete,tarifaAdd,tarifaIndex,tarifaDetail,tarifaDelete
 
 urlpatterns = [
     path('person/',personIndex.as_view(), name='personList'),
@@ -19,5 +19,10 @@ urlpatterns = [
     path('meta/',metaIndex.as_view(), name='metaList'),
     path('meta-detail/<int:pk>/',metaDetail.as_view(), name='metaDetail'),
     path('meta-delete/<int:id_meta>/',views.metaDelete, name='metaDelete'),
+    path('tarifa-add/', views.tarifaAdd, name='tarifaAdd'),
+    path('tarifa/',tarifaIndex.as_view(), name='tarifaList'),
+    path('tarifa-detail/<int:pk>/',tarifaDetail.as_view(), name='tarifaDetail'),
+    path('tarifa-delete/<int:id_tarifa>/',views.tarifaDelete, name='tarifaDelete'),
+
 
 ]

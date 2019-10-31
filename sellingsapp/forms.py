@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Textarea
 from .models import Person
-from .models import Solicitud,Metas
+from .models import Solicitud,Metas,Tarifas
 from django.forms import ModelChoiceField
 
 
@@ -80,4 +80,21 @@ class SolicitudForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={'class': 'form-control', 'placeholer': 'Notes', 'rows': 4, 'cols': 60}),
             'product_cant': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad de productos'}),
             'asesor': forms.Select(attrs={'class': 'form-control'})
+        }
+
+
+
+class TarifaForm(forms.ModelForm):
+
+    class Meta:
+        model = Tarifas
+        fields = ('limite_inf', 'limite_sup', 'nombre_rango',
+                  'porce_title', 'canal_venta','comision')
+        widgets = {
+            'limite_inf': forms.NumberInput(attrs={'class': 'form-control'}),
+            'limite_sup': forms.NumberInput(attrs={'class': 'form-control'}),
+            'nombre_rango': forms.Select(attrs={'class': 'form-control'}),
+            'porce_title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Porcentaje'}),
+            'canal_venta': forms.Select(attrs={'class': 'form-control'}),
+            'comision': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Comisión'}),
         }

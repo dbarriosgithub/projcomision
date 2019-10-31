@@ -27,11 +27,21 @@ STATE_CHOICES = (
     ('instalado', 'Instalado'),
 )
 
-
 CANAL = (
     ('FVD', 'FVD'),
     ('CU', 'CU'),
 )
+
+RANGE_CHOICES = (
+    ('R1', 'R1'),
+    ('R2', 'R2'),
+    ('R3', 'R3'),
+    ('R4', 'R4'),
+    ('R5', 'R5'),
+    ('R6', 'R6'),
+)
+
+
 # Create your models here.
 
 
@@ -78,6 +88,20 @@ class Metas(models.Model):
     anio = models.IntegerField(default=2019)
     canal_venta = models.CharField(
         max_length=20, choices=CANAL, default='FVD')
+
+
+
+class Tarifas(models.Model):
+    limite_inf = models.IntegerField(default=0)
+    limite_sup = models.IntegerField(default=0)
+    nombre_rango = models.CharField(
+        max_length=20, choices=RANGE_CHOICES, default='R1')
+    porce_title = models.CharField(max_length=200)
+    canal_venta = models.CharField(
+        max_length=20, choices=CANAL, default='FVD')
+    comision = models.IntegerField(default=0)
+
+
 
 
    

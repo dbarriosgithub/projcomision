@@ -7,11 +7,13 @@ from django.contrib import messages
 from .models import Person
 from .models import Solicitud
 from .models import Metas
+from .models import Tarifas
 
 # Importación de formularios
 from .forms import PersonForm
 from .forms import SolicitudForm
 from .forms import MetaForm
+from .forms import TarifaForm
 
 # Importación de vistas basadas en clases
 from django.views.generic.list import ListView
@@ -358,6 +360,19 @@ def getMeta(mes_meta,anio_meta,canal_venta):
     return result
 
 # -----------------------------------------------------------------------
+#  función para verificar si ya existe la TARIFA resgistrada
+# -------------------------------------------------------------------------
+def getTarifa(limite_inf,limite_sup,canal_venta):
+
+    try:
+        sql_query = "(limite_inf=%s or limite_sup=%s ) and canal_venta=%s"
+        result = Tarifas.objects.extra(where=[sql_query],params=[limite_inf,limite_sup,canal_venta])
+    except Tarifas.DoesNotExist:
+        result = []
+
+    return result
+
+# -----------------------------------------------------------------------
 #       Clase ListView que utiliza filter para búsqueda personalizada
 # -----------------------------------------------------------------------
 class searchSolicitud(ListView):
@@ -594,4 +609,76 @@ def metaDelete(request, id_meta):
                      "-" + custom_message+" ha sido eliminado")
 
     return redirect('metaList')
+
+# ---------------------------------------------------------------------------
+#       Funcion para registrar una nueva Meta para diferente canal de venta
+#----------------------------------------------------------------------------
+def tarifaAdd(request):
+    if request.method == 'POST':
+        form = TarifaForm(request.POST)
+        if form.is_valid():
+            if (getTarifa(request.POST['limite_inf'],request.POST['limite_sup'],request.POST['canal_venta']).exists()==False):
+                tarifa = form.save(commit=False)
+
+                if (tarifa.limite_inf!=0 and tarifa.limite_sup!=0):
+                    tarifa.limite_inf = request.POST['limite_inf']
+                    tarifa.limite_sup = request.POST['limite_sup']
+                    tarifa.nombre_rango = request.POST['nombre_rango']
+                    tarifa.porce_title = request.POST['porce_title']
+                    tarifa.canal_venta = request.POST['canal_venta']
+                    tarifa.comision = request.POST['comision']
+                    tarifa.save()
+                    messages.success(request, 'El registro ha sido ingresado!.')
+                    form = TarifaForm()
+                else:
+                    messages.error(request, 'Los  límites de las tarifas no pueden tener un valor  = 0 (cero)!.')
+            else:
+                messages.error(request, 'Ya existe una tarifa registrada para el rango límite indicado!.')
+
+    else:
+        form = TarifaForm()
+
+    return render(request, 'sellingsapp/tarifas_add.html', {'form': form})
+
+
+# ----------------------------------------------------------------------
+#   Vista basada en clase para listar las TARIFAS de comision de ventas
+# ----------------------------------------------------------------------
+class tarifaIndex(ListView):
+    model = Tarifas
+    template_name = 'sellingsapp/tarifas_list.html'
+    context_object_name = 'tarifas_list'
+    paginate_by = 7
+    ordering = ['id']
+
+# -----------------------------------------------------------
+#   Vista basada en clase para Editar las metas de venta
+# ------------------------------------------------------------
+class tarifaDetail(UpdateView):
+    model = Tarifas
+    fields = ['id', 'limite_inf', 'limite_sup',
+              'nombre_rango', 'porce_title', 'canal_venta','comision']
+    template_name = 'sellingsapp/tarifas_detail.html'
+
+    def form_valid(self, form):
+        tarifa = form.save(commit=False)
+        objTarifa = getTarifa(tarifa.limite_inf,tarifa.limite_sup,tarifa.canal_venta)
+
+        if (tarifa.limite_inf!=0 and tarifa.limite_sup!=0):
+
+            if (objMeta.exists()==True):
+                if (objMeta[0].id == meta.id):
+                    meta.save()
+                    messages.success(self.request, 'El registro ha sido actualizado!.')
+                else:
+                    messages.error(request, 'Ya existe una tarifa registrada para el rango límite indicado!.')
+                                                    
+            else:
+                meta.save()
+                messages.success(self.request, 'El registro ha sido actualizado!.')
+        else:
+            messages.error(request, 'Los  límites de las tarifas no pueden tener un valor  = 0 (cero)!.')
+
+
+        return self.render_to_response(self.get_context_data(form=form))
 
