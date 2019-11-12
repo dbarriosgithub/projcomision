@@ -37,8 +37,6 @@ class MetaForm(forms.ModelForm):
 # --------------------------------------------------------------
 #        Vista basada en clase form
 # --------------------------------------------------------------
-
-
 class SolicitudForm(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
@@ -82,8 +80,9 @@ class SolicitudForm(forms.ModelForm):
             'asesor': forms.Select(attrs={'class': 'form-control'})
         }
 
-
-
+# ------------------------------------------------------------------------
+#        Vista basada en clase form para mostrar los rengos de comisiones
+# ------------------------------------------------------------------------
 class TarifaForm(forms.ModelForm):
 
     class Meta:
@@ -94,7 +93,7 @@ class TarifaForm(forms.ModelForm):
             'limite_inf': forms.NumberInput(attrs={'class': 'form-control'}),
             'limite_sup': forms.NumberInput(attrs={'class': 'form-control'}),
             'nombre_rango': forms.Select(attrs={'class': 'form-control'}),
-            'porce_title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Porcentaje'}),
+            'porce_title': forms.Select(attrs={'class': 'form-control'}),
             'canal_venta': forms.Select(attrs={'class': 'form-control'}),
             'comision': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Comisión'}),
         }

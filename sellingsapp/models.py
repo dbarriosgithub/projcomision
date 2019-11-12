@@ -41,10 +41,13 @@ RANGE_CHOICES = (
     ('R6', 'R6'),
 )
 
+PERCENTS_CHOICES = (
+    ('<5%', '<5%'),
+    ('<12%', '<12%'),
+)
+
 
 # Create your models here.
-
-
 class Person(models.Model):
     cc_id = models.BigIntegerField()
     first_name = models.CharField(max_length=50)
@@ -60,24 +63,17 @@ class Person(models.Model):
 
 
 class Solicitud(models.Model):
-
     product_name = models.CharField(
         max_length=20, choices=PRODUCT_CHOICES, default='One')
-
     status = models.CharField(
         max_length=20, choices=STATE_CHOICES, default='Solicitado')
-
     dia = models.IntegerField(default=1)
-
     mes = models.CharField(
         max_length=20, choices=MONTH_CHOICES, default='Enero')
-        
     anio = models.IntegerField(default=2019)
-
     notes = models.CharField(max_length=500)
     product_cant = models.IntegerField(default=1)
     asesor = models.ForeignKey(Person, on_delete=models.CASCADE)
-
 
 
 class Metas(models.Model):
@@ -90,18 +86,12 @@ class Metas(models.Model):
         max_length=20, choices=CANAL, default='FVD')
 
 
-
 class Tarifas(models.Model):
     limite_inf = models.IntegerField(default=0)
     limite_sup = models.IntegerField(default=0)
     nombre_rango = models.CharField(
         max_length=20, choices=RANGE_CHOICES, default='R1')
-    porce_title = models.CharField(max_length=200)
+    porce_title = models.CharField(max_length=20, choices=PERCENTS_CHOICES, default='<5%')
     canal_venta = models.CharField(
         max_length=20, choices=CANAL, default='FVD')
     comision = models.IntegerField(default=0)
-
-
-
-
-   

@@ -1,0 +1,72 @@
+{% extends 'sellingsapp/base.html' %}
+{% block title %}Editar tarifas de comisión{% endblock %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+
+{% if user.is_authenticated and user.username == "@dm1n" %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="card mt-3">
+            <div class="card-header">
+                Editar comisión
+            </div>
+            <div class="card-body">
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col">
+                            <label for="id_limite_inf"><b>Rango inferior</b></label>
+                            {{ form.limite_inf|add_class:"form-control"|append_attr:"placeholder:Rango inferior"}}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <label for="id_limite_sup"><b>Rango superior</b></label>
+                            {{ form.limite_sup|add_class:"form-control"|append_attr:"placeholder:Rango superior"}}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <label for="id_nombre_rango"><b>Nombre rango</b></label>
+                            {{form.nombre_rango|add_class:"form-control"}}
+                        </div>
+                        <div class="col">
+                            <label for="id_porce_title"><b>Porcentaje</b></label>
+                            {{form.porce_title|add_class:"form-control"}}
+                        </div>   
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <label for="id_canal_venta"><b>Canal de Venta</b></label>
+                            {{form.canal_venta|add_class:"form-control"|append_attr:"placeholder:Canal de venta" }}
+                        </div>
+                        <div class="col">
+                            <label for="id_comision"><b>comisión</b></label>
+                            {{form.comision|add_class:"form-control"|append_attr:"placeholder:Comisión" }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary" type="submit" name="btnEnviar" id="btnEnviar" value="Guardar">
+                                <i class="far fa-save"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+ {% else %}
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            {% include 'sellingsapp/info_sesion.html'  with message="No tienes privilegios suficientes para acceder" %}
+        <div>
+    </div>
+{% endif %}
+{% endblock%}

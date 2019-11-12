@@ -247,7 +247,7 @@ def proyectionIndex(request):
     # Consultamos la meta definida para el mes
     metaObj = getMeta(search_mes[today.month-1],today.year,canal)
 
-    # calculamos el porcentaje de ventas ingresadas e instaladas con respecto a la meta
+    # Calculamos el porcentaje de ventas ingresadas e instaladas con respecto a la meta
     if (metaObj.exists()==True and dias_transcurridos!=0 and metaObj[0].meta_ingresada!=0 and metaObj[0].meta_instalada!=0):
         meta_ingresadas = metaObj[0].meta_ingresada
         meta_instaladas = metaObj[0].meta_instalada
@@ -258,6 +258,16 @@ def proyectionIndex(request):
         meta_instaladas = 0
         porc_meta_ingresadas=0
         porc_meta_instaladas=0
+
+    #calcula el valor de la tarifa de comisión
+    comision = getComision(canal,cant_instaladas)
+
+    if comision!=[]:
+        valor_comision = comision["valor_comision"]*cant_instaladas
+        rango_comision = comision["nombre_rango"]
+    else:
+        valor_comision = 0
+        rango_comision = 'no definido'
 
 
     return render(request, template_name,
@@ -272,7 +282,42 @@ def proyectionIndex(request):
          "porc_meta_ingresadas": format(porc_meta_ingresadas,".2f"),
          "porc_meta_instaladas": format(porc_meta_instaladas,".2f"),
          "canal":canal,
+         "valor_comision":format(valor_comision,".0f"),
+         "nombre_rango":rango_comision
          })
+
+
+#----------------------------------------------------------#
+#   Obtiene la comisión a partir del rango de venta         
+#-----------------------------------------------------------
+def getComision(canal,cant_instaladas):
+    range_comision=""
+
+    if (cant_instaladas>=9) and (cant_instaladas <=24):
+        range_comision="R1"
+    elif(cant_instaladas>=25) and (cant_instaladas <=35):
+        range_comision="R2"
+    elif (cant_instaladas>=36) and (cant_instaladas <=46):
+        range_comision="R3"
+    elif (cant_instaladas>=47) and (cant_instaladas <=57):
+        range_comision="R4"
+    elif (cant_instaladas>=58) and (cant_instaladas <=65):
+        range_comision="R5"
+    elif (cant_instaladas>=66):
+        range_comision="R6"
+
+    if canal=="FVD":
+        porce_title = "<12%"
+    elif canal=="CU":
+       porce_title="<5%"
+
+
+    obj_comision = getTarifa(canal,range_comision,porce_title)
+
+    if obj_comision.exists():
+        return {'valor_comision':obj_comision[0].comision,'nombre_rango':obj_comision[0].nombre_rango}
+    
+    return []
 
 # ------------------------------------------------------------------------
 #       Calcula la proyección de cada asesor
@@ -362,11 +407,11 @@ def getMeta(mes_meta,anio_meta,canal_venta):
 # -----------------------------------------------------------------------
 #  función para verificar si ya existe la TARIFA resgistrada
 # -------------------------------------------------------------------------
-def getTarifa(limite_inf,limite_sup,canal_venta):
+def getTarifa(canal_venta,nombre_rango,porce_title='12%'):
 
     try:
-        sql_query = "(limite_inf=%s or limite_sup=%s ) and canal_venta=%s"
-        result = Tarifas.objects.extra(where=[sql_query],params=[limite_inf,limite_sup,canal_venta])
+        sql_query = "canal_venta=%s and nombre_rango=%s and porce_title=%s"
+        result = Tarifas.objects.extra(where=[sql_query],params=[canal_venta,nombre_rango,porce_title])
     except Tarifas.DoesNotExist:
         result = []
 
@@ -576,12 +621,12 @@ class metaDetail(UpdateView):
 
     def form_valid(self, form):
         meta = form.save(commit=False)
-        objMeta = getMeta(meta.mes,meta.anio,meta.canal_venta)
+        objTarifa = getMeta(meta.mes,meta.anio,meta.canal_venta)
 
         if (meta.meta_ingresada!=0 and meta.meta_instalada!=0):
 
-            if (objMeta.exists()==True):
-                if (objMeta[0].id == meta.id):
+            if (objTarifa.exists()==True):
+                if (objTarifa[0].id == meta.id):
                     meta.save()
                     messages.success(self.request, 'El registro ha sido actualizado!.')
                 else:
@@ -617,19 +662,24 @@ def tarifaAdd(request):
     if request.method == 'POST':
         form = TarifaForm(request.POST)
         if form.is_valid():
-            if (getTarifa(request.POST['limite_inf'],request.POST['limite_sup'],request.POST['canal_venta']).exists()==False):
+            if (getTarifa(request.POST['canal_venta'],request.POST['nombre_rango'],request.POST['porce_title']).exists()==False):
                 tarifa = form.save(commit=False)
 
                 if (tarifa.limite_inf!=0 and tarifa.limite_sup!=0):
-                    tarifa.limite_inf = request.POST['limite_inf']
-                    tarifa.limite_sup = request.POST['limite_sup']
-                    tarifa.nombre_rango = request.POST['nombre_rango']
-                    tarifa.porce_title = request.POST['porce_title']
-                    tarifa.canal_venta = request.POST['canal_venta']
-                    tarifa.comision = request.POST['comision']
-                    tarifa.save()
-                    messages.success(request, 'El registro ha sido ingresado!.')
-                    form = TarifaForm()
+
+                    if(tarifa.limite_inf < tarifa.limite_sup):  
+                        tarifa.limite_inf = request.POST['limite_inf']
+                        tarifa.limite_sup = request.POST['limite_sup']
+                        tarifa.nombre_rango = request.POST['nombre_rango']
+                        tarifa.porce_title = request.POST['porce_title']
+                        tarifa.canal_venta = request.POST['canal_venta']
+                        tarifa.comision = request.POST['comision']
+                        tarifa.save()
+                        messages.success(request, 'El registro ha sido ingresado!.')
+                        form = TarifaForm()
+                    else:
+                        messages.error(request, 'El límite inferior del rango debe ser menor al límite superior!')
+
                 else:
                     messages.error(request, 'Los  límites de las tarifas no pueden tener un valor  = 0 (cero)!.')
             else:
@@ -661,24 +711,42 @@ class tarifaDetail(UpdateView):
     template_name = 'sellingsapp/tarifas_detail.html'
 
     def form_valid(self, form):
+        isValid = True
         tarifa = form.save(commit=False)
-        objTarifa = getTarifa(tarifa.limite_inf,tarifa.limite_sup,tarifa.canal_venta)
+        objTarifa = getTarifa(tarifa.canal_venta,tarifa.nombre_rango,tarifa.porce_title)
 
-        if (tarifa.limite_inf!=0 and tarifa.limite_sup!=0):
+        if (tarifa.limite_inf==0 and tarifa.limite_sup==0):
+            isValid = False
+            messages.error(self.request, 'Los  límites de las tarifas no pueden tener un valor  = 0 (cero)!.')
 
-            if (objMeta.exists()==True):
-                if (objMeta[0].id == meta.id):
-                    meta.save()
-                    messages.success(self.request, 'El registro ha sido actualizado!.')
-                else:
-                    messages.error(request, 'Ya existe una tarifa registrada para el rango límite indicado!.')
-                                                    
-            else:
-                meta.save()
-                messages.success(self.request, 'El registro ha sido actualizado!.')
-        else:
-            messages.error(request, 'Los  límites de las tarifas no pueden tener un valor  = 0 (cero)!.')
+        if (objTarifa.exists()==True):
+            if (objTarifa[0].id != tarifa.id):
+                isValid = False
+                messages.error(self.request, 'Ya existe una tarifa registrada para el rango límite indicado!.')
+        
+        if(tarifa.limite_inf >  tarifa.limite_sup):
+            isValid=False  
+            messages.error(self.request, 'El límite inferior del rango debe ser menor al límite superior!')
 
+        if isValid==True:
+            tarifa.save()
+            messages.success(self.request, 'El registro ha sido actualizado!.')
+    
 
         return self.render_to_response(self.get_context_data(form=form))
 
+
+
+# ------------------------------------------------------------
+#       Función para Eliminar las tarifas registradas
+# ------------------------------------------------------------
+def tarifaDelete(request, id_tarifa):
+    # busca el modelo idenficado por el id
+    tarifa_delete = get_object_or_404(Tarifas, pk=id_tarifa)
+    tarifa_delete.delete()
+    custom_message = " | rango "+tarifa_delete.nombre_rango + \
+        " Comisión " + str(tarifa_delete.comision) + " | "
+    messages.success(request, "El registro " + str(id_tarifa) +
+                     "-" + custom_message+" ha sido eliminado")
+
+    return redirect('tarifaList')

@@ -49,9 +49,9 @@
 
                     <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="card-body">
-                            <h5 class="display-11">% Meta ingresadas {{canal}} </h5>
+                            <h5 class="display-11">% Meta vs ingresadas {{canal}} </h5>
                             <p class="lead">{{porc_meta_ingresadas}}</p>
-                            <h5 class="display-11">% Meta instaladas {{canal}} </h5>
+                            <h5 class="display-11">% Meta vs instaladas {{canal}} </h5>
                             <p class="lead">{{porc_meta_instaladas}}</p>
                             <h5 class="display-11">Meta ingresadas</h5>
                             <p class="lead">{{meta_ingresadas}}</p>
@@ -71,6 +71,11 @@
             <h5 class="display-11">Días hábiles</h5>
             <p class="lead">{{dias_habiles}}</p>
             <hr class="my-4">
+            <h5 class="display-11">Rango comisión</h5>
+            <p class="lead">{{nombre_rango}}</p>
+            <h5 class="display-11">Cálculo comisión</h5>
+            <p class="lead">{{valor_comision}}</p>
+
             {% else %}
             <p class="lead">No se han encontrado proyecciones para este usuario</p>
             <hr class="my-4">
