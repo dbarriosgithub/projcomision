@@ -291,37 +291,28 @@ def proyectionIndex(request):
 #   Obtiene la comisión a partir del rango de venta         
 #-----------------------------------------------------------
 def getComision(canal,cant_instaladas):
-    range_comision=""
-
-    if (cant_instaladas>=9) and (cant_instaladas <=24):
-        range_comision="R1"
-    elif(cant_instaladas>=25) and (cant_instaladas <=35):
-        range_comision="R2"
-    elif (cant_instaladas>=36) and (cant_instaladas <=46):
-        range_comision="R3"
-    elif (cant_instaladas>=47) and (cant_instaladas <=57):
-        range_comision="R4"
-    elif (cant_instaladas>=58) and (cant_instaladas <=65):
-        range_comision="R5"
-    elif (cant_instaladas>=66):
-        range_comision="R6"
 
     if canal=="FVD":
         porce_title = "<12%"
     elif canal=="CU":
        porce_title="<5%"
 
+    print (cant_instaladas)
 
-    obj_comision = getTarifa(canal,range_comision,porce_title)
-
-    if obj_comision.exists():
-        return {'valor_comision':obj_comision[0].comision,'nombre_rango':obj_comision[0].nombre_rango}
+    try:
+        sql_query = "limite_inf <= %s and limite_sup >=%s and porce_title=%s and canal_venta=%s"
+        result = Tarifas.objects.extra(where=[sql_query],params=[cant_instaladas,cant_instaladas,porce_title,canal])
+    except Tarifas.DoesNotExist:
+        result = []
+    print(result.exists())
+    if result.exists():
+        return {'valor_comision':result[0].comision,'nombre_rango':result[0].nombre_rango}
     
     return []
 
-# ------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 #       Calcula la proyección de cada asesor
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def proyectionReview(user_email, mes, dia, status):
     tot_status = 0
     try:
@@ -339,9 +330,9 @@ def proyectionReview(user_email, mes, dia, status):
     return tot_status
 
 
-# -------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 #       Función para obtener días hábiles del  mes transcurridos hasta hora
-# -------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 def validDays(finalday):
     # Día actual
     today = date.today()
@@ -392,7 +383,7 @@ def lastDayMonth():
     return lastDate
 
 # -----------------------------------------------------------------------
-#  función para verificar si ya existe la meta resgistrada
+#   Función para verificar si ya existe la meta resgistrada
 # -------------------------------------------------------------------------
 def getMeta(mes_meta,anio_meta,canal_venta):
 
@@ -404,8 +395,8 @@ def getMeta(mes_meta,anio_meta,canal_venta):
 
     return result
 
-# -----------------------------------------------------------------------
-#  función para verificar si ya existe la TARIFA resgistrada
+# -------------------------------------------------------------------------
+#    Función para verificar si ya existe la TARIFA resgistrada
 # -------------------------------------------------------------------------
 def getTarifa(canal_venta,nombre_rango,porce_title='12%'):
 
