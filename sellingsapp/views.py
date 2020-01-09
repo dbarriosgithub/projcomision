@@ -34,19 +34,6 @@ class personIndex(ListView):
     context_object_name = 'person_list'
     paginate_by = 7
     ordering = ['id']
-    # def get_queryset(self):
-    #     return Person.objects.filter(id!='')
-
-
-# def personIndex(request):
-#     person_list = Person.objects.order_by('id')
-#     context = {'person_list': person_list}
-#     return render(request, 'sellingsapp/person_index.html', context)
-
-    # def get(self, request, *args, **kwargs):
-    # person_list = Person.objects.order_by('id')
-    # context = {'person_list': person_list}
-    # return render(request, self.template_name, context)
 
 # ------------------------------------------------------------
 #       Método o función para crear una persona o vendedor
@@ -83,47 +70,9 @@ class personDetail(UpdateView):
 
     def form_valid(self, form):
         person = form.save(commit=False)
-        # print(PersonForm(person))
-        # print(vars(self.request))
-        # print(person.objects)
         person.save()
         messages.success(self.request, 'El registro ha sido actualizado.')
         return self.render_to_response(self.get_context_data(form=form))
-        # return redirect('personDetail',person.id)
-
-        # return redirect('personDetail')
-
-        # return self.render_to_response(self.get_context_data(form=self.form))
-
-    # def personDetail(request):
-    #     return render(request, 'sellingsapp/person_detail.html', {'urls': [home1, home2]})
-
-    # def get(self, request, *args, **kwargs):
-    #     if request.method == 'POST':
-    #         messages.success(request, 'El registro ha sido actualizado.')
-    #         return render(request, 'sellingsapp/person_detail.html')
-
-    # busca el modelo idenficado por el id
-    # person_detail = get_object_or_404(Person, pk=id_person)
-
-    # # si se ha enviado el formulario de editar
-    # if request.method == "POST":
-    #     form = PersonForm(request.POST, instance=person_detail)
-
-    #     if form.is_valid():
-    #         person = form.save(commit=False)
-    #         person.first_name = request.POST['first_name']
-    #         person.last_name = request.POST['last_name']
-    #         person.age = request.POST['age']
-    #         person.celphone = request.POST['celphone']
-    #         person.address = request.POST['address']
-    #         person.email = request.POST['email']
-    #         person.save()
-    #         messages.success(request, 'El registro ha sido actualizado.')
-    #     return render(request, 'sellingsapp/person_detail.html', {'form': form})
-    # else:
-    #     form = PersonForm(instance=person_detail)
-    #     return render(request, 'sellingsapp/person_detail.html', {'form': form})
 
 # ---------------------------------------------------------
 #            Método que elimina una persona o vendedor
@@ -198,17 +147,17 @@ def proyectionIndex(request):
 
     query_person='' #Se establece un query para admin o usuario común
 
-    if (request.user.get_username() == "@dm1n" or request.user.get_username() == "supervis@r"):
-        search_cc_id = request.GET.get('search_cc_id')
+    # if (request.user.get_username() == "@dm1n" or request.user.get_username() == "supervis@r"):
+    search_cc_id = request.GET.get('search_cc_id')
 
-        if search_cc_id!='':
-            query_person =  "Person.objects.get(cc_id=search_cc_id)"
-        else:
-            search_email=""
-
+    if search_cc_id!='':
+        query_person =  "Person.objects.get(cc_id=search_cc_id)"
     else:
-        search_email = request.user.email
-        query_person =  "Person.objects.get(email=search_email)"
+        search_email=""
+
+    # else:
+    #     search_email = request.user.email
+    #     query_person =  "Person.objects.get(email=search_email)"
 
     # Buscamos el email asociado al cc_id o al usuario de la sesión
     if query_person !='':
@@ -245,17 +194,17 @@ def proyectionIndex(request):
     canal = ObjPerson.canal_de_venta
 
     # Consultamos la meta definida para el mes
-    metaObj = getMeta(search_mes[today.month-1],today.year,canal)
+    # metaObj = getMeta(search_mes[today.month-1],today.year,canal)
 
     # Calculamos el porcentaje de ventas ingresadas e instaladas con respecto a la meta
-    if (metaObj.exists()==True and dias_transcurridos!=0 and metaObj[0].meta_ingresada!=0 and metaObj[0].meta_instalada!=0):
-        meta_ingresadas = metaObj[0].meta_ingresada
-        meta_instaladas = metaObj[0].meta_instalada
-        porc_meta_ingresadas = (proyeccion_ingresadas/meta_ingresadas)*100
-        porc_meta_instaladas = (proyeccion_instaladas/meta_instaladas)*100
+    if (request.GET.get('meta_instalada')!="" and request.GET.get('meta_ingresada')!="" and int(request.GET.get('meta_instalada'))>0 and int(request.GET.get('meta_ingresada'))>0):
+        meta_instalada = int(request.GET.get('meta_instalada'))
+        meta_ingresada = int(request.GET.get('meta_ingresada'))
+        porc_meta_ingresadas = (proyeccion_ingresadas/meta_ingresada)*100
+        porc_meta_instaladas = (proyeccion_instaladas/meta_instalada)*100
     else:
-        meta_ingresadas = 0
-        meta_instaladas = 0
+        meta_ingresada = 0
+        meta_instalada = 0
         porc_meta_ingresadas=0
         porc_meta_instaladas=0
 
@@ -277,8 +226,8 @@ def proyectionIndex(request):
          "cant_solicitadas": tot_ingresadas,
          "proyeccion_ingre": format(proyeccion_ingresadas,".2f"),
          "proyeccion_instal": format(proyeccion_instaladas,".2f"),
-         "meta_ingresadas": meta_ingresadas,
-         "meta_instaladas": meta_instaladas,
+         "meta_ingresadas": meta_ingresada,
+         "meta_instaladas": meta_instalada,
          "porc_meta_ingresadas": format(porc_meta_ingresadas,".2f"),
          "porc_meta_instaladas": format(porc_meta_instaladas,".2f"),
          "canal":canal,
@@ -309,7 +258,6 @@ def getComision(canal,cant_instaladas):
         return {'valor_comision':result[0].comision,'nombre_rango':result[0].nombre_rango}
     
     return []
-
 # ---------------------------------------------------------------------------
 #       Calcula la proyección de cada asesor
 # ---------------------------------------------------------------------------
@@ -373,7 +321,7 @@ def isHoliday(dia):
     return False
 
 # -----------------------------------------------------------------------
-#       Función que obtien el último día del mes
+#       Función que obtiene el último día del mes
 # -----------------------------------------------------------------------
 def lastDayMonth():
     today = date.today()

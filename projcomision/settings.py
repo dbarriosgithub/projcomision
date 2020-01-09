@@ -85,7 +85,7 @@ DATABASES = {
         'OPTIONS': {
             'sql_mode': 'traditional'
         },
-        'NAME': 'encuesta_db',
+        'NAME': 'comision_db',
         'USER': 'userpython',
         'PASSWORD': 'Db4rr10s$',
         'HOST': 'localhost',
