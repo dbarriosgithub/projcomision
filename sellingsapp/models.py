@@ -38,14 +38,14 @@ RANGE_CHOICES = (
     ('R3', 'R3'),
     ('R4', 'R4'),
     ('R5', 'R5'),
-    ('R6', 'R6'),
 )
 
 PERCENTS_CHOICES = (
-    ('<5%', '<5%'),
-    ('<12%', '<12%'),
+    ('porcentaje_0a10', '0-10%'),
+    ('porcentaje_10a14', '10-14%'),
+    ('porcentaje_m14', '>14%'),
+    ('INTER', 'INTER'),
 )
-
 
 # Create your models here.
 class Person(models.Model):
@@ -91,7 +91,5 @@ class Tarifas(models.Model):
     limite_sup = models.IntegerField(default=0)
     nombre_rango = models.CharField(
         max_length=20, choices=RANGE_CHOICES, default='R1')
-    porce_title = models.CharField(max_length=20, choices=PERCENTS_CHOICES, default='<5%')
-    canal_venta = models.CharField(
-        max_length=20, choices=CANAL, default='FVD')
+    porce_title = models.CharField(max_length=20, choices=PERCENTS_CHOICES, default='0-10%')
     comision = models.IntegerField(default=0)

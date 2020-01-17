@@ -88,12 +88,11 @@ class TarifaForm(forms.ModelForm):
     class Meta:
         model = Tarifas
         fields = ('limite_inf', 'limite_sup', 'nombre_rango',
-                  'porce_title', 'canal_venta','comision')
+                  'porce_title','comision')
         widgets = {
             'limite_inf': forms.NumberInput(attrs={'class': 'form-control'}),
             'limite_sup': forms.NumberInput(attrs={'class': 'form-control'}),
             'nombre_rango': forms.Select(attrs={'class': 'form-control'}),
             'porce_title': forms.Select(attrs={'class': 'form-control'}),
-            'canal_venta': forms.Select(attrs={'class': 'form-control'}),
             'comision': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Comisión'}),
         }

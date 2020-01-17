@@ -190,8 +190,6 @@ def proyectionIndex(request):
         proyeccion_ingresadas = ((cant_solicitadas+cant_instaladas)/dias_transcurridos)*dias_habiles
         proyeccion_instaladas = (cant_instaladas/dias_transcurridos)*dias_habiles
 
-    # Consultamos el canal de venta del Usuario indicado
-    canal = ObjPerson.canal_de_venta
 
     # Consultamos la meta definida para el mes
     # metaObj = getMeta(search_mes[today.month-1],today.year,canal)
@@ -209,10 +207,10 @@ def proyectionIndex(request):
         porc_meta_instaladas=0
 
     #calcula el valor de la tarifa de comisión
-    comision = getComision(canal,cant_instaladas)
-
+    comision = getComision(cant_instaladas)
+    
     if comision!=[]:
-        valor_comision = comision["valor_comision"]*cant_instaladas
+        tabla_comision = comision
         rango_comision = comision["nombre_rango"]
     else:
         valor_comision = 0
@@ -230,32 +228,34 @@ def proyectionIndex(request):
          "meta_instaladas": meta_instalada,
          "porc_meta_ingresadas": format(porc_meta_ingresadas,".2f"),
          "porc_meta_instaladas": format(porc_meta_instaladas,".2f"),
-         "canal":canal,
-         "valor_comision":format(valor_comision,".0f"),
-         "nombre_rango":rango_comision
+        #  "valor_comision":format(valor_comision,".0f"),
+         "nombre_rango":rango_comision,
+         "tabla_comision":tabla_comision
          })
 
 
 #----------------------------------------------------------#
 #   Obtiene la comisión a partir del rango de venta         
 #-----------------------------------------------------------
-def getComision(canal,cant_instaladas):
+def getComision(cant_instaladas):
 
-    if canal=="FVD":
-        porce_title = "<12%"
-    elif canal=="CU":
-       porce_title="<5%"
-
-    print (cant_instaladas)
-
+    cant_instaladas=19
+    array_range = {}
+        
     try:
-        sql_query = "limite_inf <= %s and limite_sup >=%s and porce_title=%s and canal_venta=%s"
-        result = Tarifas.objects.extra(where=[sql_query],params=[cant_instaladas,cant_instaladas,porce_title,canal])
+        sql_query = "limite_inf <= %s and limite_sup >=%s"
+        result = Tarifas.objects.extra(where=[sql_query],params=[cant_instaladas,cant_instaladas])
     except Tarifas.DoesNotExist:
         result = []
-    print(result.exists())
+
     if result.exists():
-        return {'valor_comision':result[0].comision,'nombre_rango':result[0].nombre_rango}
+
+        for record in result:
+            array_range[record.porce_title] = format((int(record.comision) * cant_instaladas),",d")
+            array_range["nombre_rango"] = record.nombre_rango
+            array_range["escala"] = str(record.limite_inf)+"-"+str(record.limite_sup)
+
+        return array_range
     
     return []
 # ---------------------------------------------------------------------------
@@ -346,11 +346,11 @@ def getMeta(mes_meta,anio_meta,canal_venta):
 # -------------------------------------------------------------------------
 #    Función para verificar si ya existe la TARIFA resgistrada
 # -------------------------------------------------------------------------
-def getTarifa(canal_venta,nombre_rango,porce_title='12%'):
+def getTarifa(nombre_rango,porce_title='12%'):
 
     try:
-        sql_query = "canal_venta=%s and nombre_rango=%s and porce_title=%s"
-        result = Tarifas.objects.extra(where=[sql_query],params=[canal_venta,nombre_rango,porce_title])
+        sql_query = "nombre_rango=%s and porce_title=%s"
+        result = Tarifas.objects.extra(where=[sql_query],params=[nombre_rango,porce_title])
     except Tarifas.DoesNotExist:
         result = []
 
@@ -601,7 +601,7 @@ def tarifaAdd(request):
     if request.method == 'POST':
         form = TarifaForm(request.POST)
         if form.is_valid():
-            if (getTarifa(request.POST['canal_venta'],request.POST['nombre_rango'],request.POST['porce_title']).exists()==False):
+            if (getTarifa(request.POST['nombre_rango'],request.POST['porce_title']).exists()==False):
                 tarifa = form.save(commit=False)
 
                 if (tarifa.limite_inf!=0 and tarifa.limite_sup!=0):
@@ -611,7 +611,6 @@ def tarifaAdd(request):
                         tarifa.limite_sup = request.POST['limite_sup']
                         tarifa.nombre_rango = request.POST['nombre_rango']
                         tarifa.porce_title = request.POST['porce_title']
-                        tarifa.canal_venta = request.POST['canal_venta']
                         tarifa.comision = request.POST['comision']
                         tarifa.save()
                         messages.success(request, 'El registro ha sido ingresado!.')
@@ -646,13 +645,13 @@ class tarifaIndex(ListView):
 class tarifaDetail(UpdateView):
     model = Tarifas
     fields = ['id', 'limite_inf', 'limite_sup',
-              'nombre_rango', 'porce_title', 'canal_venta','comision']
+              'nombre_rango', 'porce_title','comision']
     template_name = 'sellingsapp/tarifas_detail.html'
 
     def form_valid(self, form):
         isValid = True
         tarifa = form.save(commit=False)
-        objTarifa = getTarifa(tarifa.canal_venta,tarifa.nombre_rango,tarifa.porce_title)
+        objTarifa = getTarifa(tarifa.nombre_rango,tarifa.porce_title)
 
         if (tarifa.limite_inf==0 and tarifa.limite_sup==0):
             isValid = False
