@@ -3,6 +3,7 @@
 __pycache__
 myvenv
 projcomision/settings.py
+projcomision/sellingsapp/manage.py
 db.sqlite3
 /static
 .DS_Store
