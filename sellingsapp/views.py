@@ -206,7 +206,8 @@ def proyectionIndex(request):
         rango_comision = comision["nombre_rango"]
     else:
         valor_comision = 0
-        rango_comision = 'no definido'
+        rango_comision = 'no aplica'
+        tabla_comision = 'no aplica'
 
 
     return render(request, template_name,
