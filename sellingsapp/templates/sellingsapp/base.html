@@ -61,16 +61,6 @@
 
           {% if user.is_authenticated and user.username == "@dm1n" %}
               <li class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Metas</a>
-              <div class="dropdown-menu">
-                <a href="{% url 'metaAdd' %}" class="dropdown-item">Adicionar Meta</a>
-                <a href="{% url 'metaList' %}" class="dropdown-item">Listar Metas</a>
-              </div>
-              </li>
-          {% endif %}
-
-          {% if user.is_authenticated and user.username == "@dm1n" %}
-              <li class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tarifas</a>
               <div class="dropdown-menu">
                 <a href="{% url 'tarifaAdd' %}" class="dropdown-item">Adicionar Tarifa</a>
