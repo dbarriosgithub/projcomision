@@ -155,10 +155,6 @@ def proyectionIndex(request):
     else:
         search_email=""
 
-    # else:
-    #     search_email = request.user.email
-    #     query_person =  "Person.objects.get(email=search_email)"
-
     # Buscamos el email asociado al cc_id o al usuario de la sesión
     if query_person !='':
         try:
@@ -189,10 +185,6 @@ def proyectionIndex(request):
     else:
         proyeccion_ingresadas = ((cant_solicitadas+cant_instaladas)/dias_transcurridos)*dias_habiles
         proyeccion_instaladas = (cant_instaladas/dias_transcurridos)*dias_habiles
-
-
-    # Consultamos la meta definida para el mes
-    # metaObj = getMeta(search_mes[today.month-1],today.year,canal)
 
     # Calculamos el porcentaje de ventas ingresadas e instaladas con respecto a la meta
     if (request.GET.get('meta_instalada')!="" and request.GET.get('meta_ingresada')!="" and int(request.GET.get('meta_instalada'))>0 and int(request.GET.get('meta_ingresada'))>0):
@@ -228,7 +220,6 @@ def proyectionIndex(request):
          "meta_instaladas": meta_instalada,
          "porc_meta_ingresadas": format(porc_meta_ingresadas,".2f"),
          "porc_meta_instaladas": format(porc_meta_instaladas,".2f"),
-        #  "valor_comision":format(valor_comision,".0f"),
          "nombre_rango":rango_comision,
          "tabla_comision":tabla_comision
          })
@@ -239,7 +230,6 @@ def proyectionIndex(request):
 #-----------------------------------------------------------
 def getComision(cant_instaladas):
 
-    cant_instaladas=19
     array_range = {}
         
     try:
@@ -346,7 +336,7 @@ def getMeta(mes_meta,anio_meta,canal_venta):
 # -------------------------------------------------------------------------
 #    Función para verificar si ya existe la TARIFA resgistrada
 # -------------------------------------------------------------------------
-def getTarifa(nombre_rango,porce_title='12%'):
+def getTarifa(nombre_rango,porce_title):
 
     try:
         sql_query = "nombre_rango=%s and porce_title=%s"
