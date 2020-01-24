@@ -1,8 +1,9 @@
 from django import forms
 from django.forms import Textarea
 from .models import Person
-from .models import Solicitud,Metas,Tarifas
+from .models import Solicitud,Metas,Tarifas,Feriados
 from django.forms import ModelChoiceField
+
 
 
 class PersonForm(forms.ModelForm):
@@ -96,3 +97,17 @@ class TarifaForm(forms.ModelForm):
             'porce_title': forms.Select(attrs={'class': 'form-control'}),
             'comision': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Comisión'}),
         }
+
+# ----------------------------------------------------------------------------------------
+#        Vista basada en clase form para guardar los dias OFF que no se tendrán en cuenta
+# ----------------------------------------------------------------------------------------
+class FeriadoForm(forms.ModelForm):
+
+    class Meta:
+        model = Feriados
+        fields = ('fecha', 'notes')
+        widgets = {
+            'fecha': forms.DateInput(attrs={'class': 'form-control'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'placeholer': 'Notes', 'rows': 4, 'cols': 60}),
+        }
+

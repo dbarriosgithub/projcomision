@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    $('#datepicker_fecha').datetimepicker({viewMode: 'years',format: 'YYYY-MM-DD'});
+    
     var param_field = '';
 
     // ------------------------------------------------
@@ -31,7 +33,6 @@ $(document).ready(function () {
             cant = 2;
         else if ($(this).val() == 'tripleplay')
             cant = 3;
-
-        $("#id_product_cant").val(cant);
+            
     });
 });

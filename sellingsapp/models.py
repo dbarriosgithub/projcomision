@@ -93,3 +93,8 @@ class Tarifas(models.Model):
         max_length=20, choices=RANGE_CHOICES, default='R1')
     porce_title = models.CharField(max_length=20, choices=PERCENTS_CHOICES, default='0-10%')
     comision = models.IntegerField(default=0)
+
+class Feriados(models.Model):
+    fecha  = models.DateField()
+    notes = models.CharField(max_length=500)
+    

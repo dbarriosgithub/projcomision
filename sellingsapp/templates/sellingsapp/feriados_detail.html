@@ -1,0 +1,55 @@
+{% extends 'sellingsapp/base.html' %}
+{% block title %}Editar days off{% endblock %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+
+{% if user.is_authenticated and user.username == "@dm1n" %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+        <div class="card mt-3">
+            <div class="card-header">
+                Edit Days Off
+            </div>
+            <div class="card-body">
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col">
+                            <label for="id_fecha"><b>Fecha</b></label>
+                            
+                            <div class="form-group">
+                                <div class="input-group date" id="datepicker_fecha" data-target-input="nearest">
+                                    {{form.fecha|add_class:"form-control datetimepicker-input"|append_attr:"data-target:#datepicker_fecha"}}
+                                    <div class="input-group-append" data-target="#datepicker_fecha" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="id_notes"><b>Nota</b></label>
+                            {{form.notes|add_class:"form-control"}}
+                        </div>   
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary" type="submit" name="btnEnviar" id="btnEnviar" value="Guardar">
+                                <i class="far fa-save"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+ {% else %}
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            {% include 'sellingsapp/info_sesion.html'  with message="No tienes privilegios suficientes para acceder" %}
+        <div>
+    </div>
+{% endif %}
+{% endblock%}

@@ -1,0 +1,56 @@
+{% extends 'sellingsapp/base.html' %}
+{% block title %}Lista de dias off{% endblock %}
+{% load static %}
+{% block content %}
+
+{% if user.is_authenticated and user.username == "@dm1n" %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3">
+
+        <div class="panel-heading">
+            <a class="btn btn-primary mb-2" href="{% url 'feriadoAdd'%}" role="button"><i class="fas fa-plus-circle"></i>
+                Add day Off</a>
+        </div>
+
+        {% if feriados_list %}
+        <table class="table table-sm table-expand-sm table-responsive-sm">
+            <thead class="thead bg-dark text-white text-center">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Nota</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+
+            {% for feriado in feriados_list %}
+            <tr>
+                <td class="text-center">{{feriado.id}}</td>
+                <td class="text-center">{{feriado.fecha}}</td>
+                <td class="text-center">{{feriado.notes}}</td>
+                <td class="text-center">
+                    <a href="{% url 'feriadoDetail' feriado.id %}">
+                        <i class="far fa-edit"></i>
+                    </a>
+                    <a href="{% url 'feriadoDelete' feriado.id %}">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </td>
+            </tr>
+
+            {% endfor %}
+        </table>
+        {% include 'sellingsapp/pagination.html'%}
+        {% else %}
+        <p>No people are available.</p>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+  <div class="row">
+      <div class="col-lg-6 offset-lg-3">
+        {% include 'sellingsapp/info_sesion.html'  with message="No tienes privilegios suficientes para acceder" %}
+      <div>
+  </div>
+{% endif %}
+{% endblock %}
