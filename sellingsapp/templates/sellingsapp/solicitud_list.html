@@ -13,17 +13,20 @@
                 <div class="col">
                     <a class="btn btn-primary mb-2" href="{% url 'solicitudAdd'%}" role="button"><i
                             class="fas fa-plus-circle"></i> Add Venta</a>
+                    <button type="button" class="btn btn-outline-primary waves-effect mb-2" data-toggle="modal" data-target="#modalThanks">
+                        <i class="fas fa-file-excel"></i> Export excel
+                    </button>
                 </div>
                 <div class="col">
                     <form id="frmsearch" method='GET' action="{% url 'solicitudSearch' %}">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1">
+                                <span class="input-group-text mb-2" id="basic-addon1">
                                     <label class="fa fa-search"></label>
                                 </span>
                             </div>
                             <input id="search_text" name="search_text" value="{{request.GET.search_text}}" type="text"
-                                class="form-control" placeholder="Search" aria-label="Search_info"
+                                class="form-control mb-2" placeholder="Search" aria-label="Search_info"
                                 aria-describedby="basic-addon1">
                             <div id="toolbar">
                                 <select id="search_field" name="search_field" class="form-control">
@@ -89,4 +92,46 @@
       <div>
   </div>
 {% endif %}
+     <!-- modal thanks you -->
+     <div id="modalThanks" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+             <div class="modal-content">
+                 <div class="modal-body">
+                   
+                        <form id="frmexport" method='POST' action="{% url 'exportExcel' %}">
+                          <div class="row">
+                            {% csrf_token %}
+                            <div class="col-4  text-center">
+                                <select id="search_mes_excel" name="search_mes_excel" class="form-control">
+                                    <option value="Enero">Enero</option>
+                                    <option value="Febrero">Febrero</option>
+                                    <option value="Marzo">Marzo</option>
+                                    <option value="Abril">Abril</option>
+                                    <option value="Mayo">Mayo</option>
+                                    <option value="Junio">Junio</option>
+                                    <option value="Julio">Julio</option>
+                                    <option value="Agosto">Agosto</option>
+                                    <option value="Septiembre">Septiembre</option>
+                                    <option value="Octubre">Octubre</option>
+                                    <option value="Noviembre">Noviembre</option>
+                                    <option value="Diciembre">Diciembre</option>
+                                </select>
+                            </div>
+                            <div class="col-4  text-center">
+                                <input class="form-control" id="anio" name="anio" value="" type="number" value="" placeholder="Año">
+                            </div>
+                            <div class="col-4  text-center">
+                                <button class="btn btn-primary mb-2" type="submit" name="btnExportExcel" id="btnExportExcel" value="Export excel">
+                                    <i class="fas fa-file-excel"></i> Export excel
+                                </button>
+                            </div>
+                            </div>
+                        </form>
+                     
+                 </div>
+             </div>
+         </div>
+     </div>
+     <!-- fin modal thanks you -->
+
 {% endblock %}

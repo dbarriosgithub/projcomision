@@ -26,6 +26,7 @@ from django.core.paginator import Paginator
 from datetime import datetime, timedelta, date
 import calendar
 import json
+import xlwt
 
 # ----------------------------------------------------------------------------
 #   Vista basada en clase para listar las personas o vendedores registrados
@@ -806,7 +807,7 @@ class feriadoIndex(ListView):
     ordering = ['id']
 
 # ---------------------------------------------------------------------
-#       Función para Eliminar los días feriados o dias Off registrados
+#    Función para Eliminar los días feriados o dias Off registrados
 # ---------------------------------------------------------------------
 def feriadoDelete(request, id_feriado):
     # busca el modelo idenficado por el id
@@ -817,6 +818,50 @@ def feriadoDelete(request, id_feriado):
                      "-" + custom_message+" ha sido eliminado")
 
     return redirect('feriadoList')
+
+#----------------------------------------------------------------------
+#     Función para exportar las ventas registradas a EXCEL
+# ---------------------------------------------------------------------
+def export_solicitudes_xls(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="solicitudes.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Solicitudes')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['Producto', 'Estado', 'dia', 'mes','anio','notes','Rel.productos','Asesor' ]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    sql_query = "mes=%s and anio=%s"
+    rows = Solicitud.objects.extra(where=[sql_query], params=[
+        request.POST['search_mes_excel'], request.POST['anio']])
+
+    # rows = Solicitud.objects.all().select_related('asesor')
+   
+    for row in rows:
+        row_num = row_num + 1
+        ws.write(row_num, 0, row.product_name, font_style)
+        ws.write(row_num, 1, row.status, font_style)
+        ws.write(row_num, 2, row.dia, font_style)
+        ws.write(row_num, 3, row.mes, font_style)
+        ws.write(row_num, 4, row.anio, font_style)
+        ws.write(row_num, 5, row.notes, font_style)
+        ws.write(row_num, 6, row.product_cant, font_style)
+        ws.write(row_num, 7, row.asesor.cc_id, font_style)
+
+    wb.save(response)
+    return response
 
 
 

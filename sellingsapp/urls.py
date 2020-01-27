@@ -32,7 +32,7 @@ urlpatterns = [
     path('feriado-detail/<int:pk>/', feriadoDetail.as_view(), name='feriadoDetail'),
     path('feriado/', feriadoIndex.as_view(), name='feriadoList'),
     path('feriado-delete/<int:id_feriado>/', views.feriadoDelete, name='feriadoDelete'),
-
-
+#     url(r'^export/xls/$', views.export_solicitudes_xls, name='export_solicitudes_xls'),
+    path('export-xls/', views.export_solicitudes_xls,name='exportExcel'),
 
 ]

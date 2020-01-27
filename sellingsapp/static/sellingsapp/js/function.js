@@ -24,6 +24,10 @@ $(document).ready(function () {
         });
     });
 
+    $("#btnexportexcel").click(function(){
+        $('#modalThanks').modal('show');
+    });
+
     $("#id_product_name").change(function () {
          cant = 0;
 
