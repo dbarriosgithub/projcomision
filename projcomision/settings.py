@@ -156,11 +156,17 @@ LOGIN_REDIRECT_URL = '/'
 
 
 # settings for mailtrap
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = '4c07a1de76cd09'
-EMAIL_HOST_PASSWORD = 'd9296a205cbf78'
-EMAIL_PORT = '2525'
+# EMAIL_HOST = 'smtp.mailtrap.io'
+# EMAIL_HOST_USER = '4c07a1de76cd09'
+# EMAIL_HOST_PASSWORD = 'd9296a205cbf78'
+# EMAIL_PORT = '2525'
 
 # During development only
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# settings forSendgrid
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = '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'
+EMAIL_PORT = '587'
 
