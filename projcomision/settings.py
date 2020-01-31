@@ -31,20 +31,22 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
+
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sellingsapp',
     'perfiles',
+    'django.contrib.admin',
+    'django.contrib.auth',
     'django_filters',
     'bootstrap',
     'fontawesome',
     'widget_tweaks',
     'xlwt',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -151,3 +153,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = '/inicia-sesion/'
 LOGIN_REDIRECT_URL = '/'
+
+
+# settings for mailtrap
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '4c07a1de76cd09'
+EMAIL_HOST_PASSWORD = 'd9296a205cbf78'
+EMAIL_PORT = '2525'
+
+# During development only
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+

@@ -87,7 +87,6 @@
                 
           <li class="nav-item">
             <a href="{% url 'proyectionList' %}" class="nav-link">Proyecciones</a>
-            <a href="{% url 'exportExcel' %}">Export all solicitudes</a>
           </li>
 
           <li class="nav-item">
@@ -99,7 +98,14 @@
       </nav>
 
     <div class="container-fluid">
+
+     {% if user.is_authenticated and user.username == "@dm1n" %}
+        <a href="{% url 'password_reset' %}">
+          <img class="img-fluid" src="{% static 'sellingsapp/images/heart.png' %}" alt="logo">
+        </a>
+     {% else %}
         <img class="img-fluid" src="{% static 'sellingsapp/images/heart.png' %}" alt="logo">
+     {%endif%}
         {% include 'sellingsapp/messages.html' %}
         {% block content %}
         {% endblock %}

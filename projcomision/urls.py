@@ -17,15 +17,17 @@ Including another URLconf
 from perfiles.views import SignUpView, BienvenidaView, SignInView, SignOutView
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path,re_path
+from django.views.generic import TemplateView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-   # url(r'^charcha-serviceworker(.*.js)$', views.charcha_serviceworker, name='charcha_serviceworker'),
     path('', include('sellingsapp.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^$', BienvenidaView.as_view(), name='bienvenida'),
     url(r'^registrarse/$', SignUpView.as_view(), name='sign_up'),
     url(r'^iniciar-sesion/$', SignInView.as_view(), name='sign_in'),
     url(r'^cerrar-sesion/$', SignOutView.as_view(), name='sign_out'),
+    url('^', include('django.contrib.auth.urls')),
 ]
 

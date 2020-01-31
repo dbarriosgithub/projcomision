@@ -1,6 +1,7 @@
 from django.conf.urls import url
-from django.urls import path
+from django.urls import path,include
 from . import views
+
 from .views import personIndex, personAdd, personDetail, solicitudIndex, searchSolicitud, solicitudDelete, solicitudAdd, solicitudDetail, metaAdd, metaIndex, metaDetail, metaDelete, tarifaAdd, tarifaIndex, tarifaDetail, tarifaDelete, feriadoAdd, feriadoDetail,feriadoIndex,feriadoDelete
 
 urlpatterns = [
@@ -34,5 +35,5 @@ urlpatterns = [
     path('feriado-delete/<int:id_feriado>/', views.feriadoDelete, name='feriadoDelete'),
 #     url(r'^export/xls/$', views.export_solicitudes_xls, name='export_solicitudes_xls'),
     path('export-xls/', views.export_solicitudes_xls,name='exportExcel'),
-
+    
 ]
