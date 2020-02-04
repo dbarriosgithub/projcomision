@@ -44,30 +44,34 @@
         <table class="table table-sm table-expand-sm table-responsive-sm">
             <thead class="thead bg-dark text-white text-center">
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Product Name</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Dia</th>
-                    <th scope="col">Mes</th>
-                    <th scope="col">Año</th>
-                    <th scope="col">Notes</th>
-                    <th scope="col col-lg">Productos Asociados</th>
-                    <th scope="col">Action</th>
+                    <th class="align-middle" scope="col">#</th>
+                    <th class="align-middle" scope="col">Product Name</th>
+                    <th class="align-middle" scope="col">Status</th>
+                    <th class="align-middle" scope="col">Dia</th>
+                    <th class="align-middle" scope="col">Mes</th>
+                    <th class="align-middle" scope="col">Año</th>
+                    <th class="align-middle d-none d-sm-none d-md-table-cell" scope="col">Notes</th>
+                    <th class="align-middle" scope="col">Cliente</th>
+                    <th class="align-middle d-none d-sm-none d-md-table-cell" scope="col">Celular</th>
+                    <th class="align-middle" scope="col col-lg">Productos Asociados</th>
+                    <th class="align-middle" scope="col">Action</th>
                 </tr>
             </thead>
 
             <tbody>
             {% for solicitud in solicitud_list %}
             <tr>
-                <td class="text-center">{{solicitud.id}}</td>
-                <td class="text-center">{{solicitud.product_name}}</td>
-                <td class="text-center">{{solicitud.status}}</td>
-                <td class="text-center">{{solicitud.dia}}</td>
-                <td class="text-center">{{solicitud.mes}}</td>
-                <td class="text-center">{{solicitud.anio}}</td>
-                <td class="text-center">{{solicitud.notes}}</td>
-                <td class="text-center">{{solicitud.product_cant}}</td>
-                <td class="text-center">
+                <td class="text-center align-middle">{{solicitud.id}}</td>
+                <td class="text-center align-middle">{{solicitud.product_name}}</td>
+                <td class="text-center align-middle">{{solicitud.status}}</td>
+                <td class="text-center align-middle">{{solicitud.dia}}</td>
+                <td class="text-center align-middle">{{solicitud.mes}}</td>
+                <td class="text-center align-middle">{{solicitud.anio}}</td>
+                <td class="text-center align-middle d-none d-sm-none d-md-table-cell">{{solicitud.notes}}</td>
+                <td class="text-center align-middle">{{solicitud.nomcliente}}</td>
+                <td class="text-center align-middle d-none d-sm-none d-md-table-cell">{{solicitud.celcliente}}</td>
+                <td class="text-center align-middle">{{solicitud.product_cant}}</td>
+                <td class="text-center align-middle">
                     <a href="{% url 'solicitudDetail' solicitud.id %}">
                         <i class="far fa-edit"></i>
                     </a>

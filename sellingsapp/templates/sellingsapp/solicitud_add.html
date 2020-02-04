@@ -41,8 +41,19 @@
             <div class="col">
               {% comment %} -- el formato del campo de Email se implementa en el archivo forms.py {% endcomment %}
                <label for="id_anio"><b>Año</b></label>
-
               {{form.anio}}
+            </div>
+          </div>
+          <br>
+
+          <div class="row">
+            <div class="col">
+              <label for="id_nomcliente"><b>Nombre Cliente</b></label>
+                {{form.nomcliente}}
+            </div>
+            <div class="col">
+              <label for="id_celcliente"><b>Cel Cliente</b></label>
+                {{form.celcliente}}
             </div>
           </div>
           <br>

@@ -463,6 +463,8 @@ def solicitudAdd(request):
         solicitud.dia = request.POST['dia']
         solicitud.mes = request.POST['mes']
         solicitud.anio = request.POST['anio']
+        solicitud.nomcliente = request.POST['nomcliente']
+        solicitud.celcliente = request.POST['celcliente']
         solicitud.product_cant = request.POST['product_cant']
         solicitud.notes = request.POST['notes']
         solicitud.asesor = Person.objects.get(id=request.POST['asesor'])
@@ -508,6 +510,8 @@ def solicitudDetail(request, pk):
         solicitud.dia = request.POST['dia']
         solicitud.mes = request.POST['mes']
         solicitud.anio = request.POST['anio']
+        solicitud.nomcliente = request.POST['nomcliente']
+        solicitud.celcliente = request.POST['celcliente']
         solicitud.product_cant = request.POST['product_cant']
         solicitud.notes = request.POST['notes']
         solicitud.asesor = Person.objects.get(id=request.POST['asesor'])
@@ -835,7 +839,7 @@ def export_solicitudes_xls(request):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
 
-    columns = ['Producto', 'Estado', 'dia', 'mes','anio','notes','Rel.productos','Asesor' ]
+    columns = ['Producto', 'Estado', 'dia', 'mes','anio','notes','Rel.productos','Asesor','Cliente','cel. cliente' ]
 
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
@@ -859,6 +863,9 @@ def export_solicitudes_xls(request):
         ws.write(row_num, 5, row.notes, font_style)
         ws.write(row_num, 6, row.product_cant, font_style)
         ws.write(row_num, 7, row.asesor.cc_id, font_style)
+        ws.write(row_num, 8, row.nomcliente, font_style) 
+        ws.write(row_num, 9, row.celcliente, font_style)
+
 
     wb.save(response)
     return response

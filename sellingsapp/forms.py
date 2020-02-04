@@ -68,7 +68,7 @@ class SolicitudForm(forms.ModelForm):
     class Meta:
         model = Solicitud
         fields = ('product_name', 'status', 'dia', 'mes',
-                  'anio', 'product_cant', 'notes', 'asesor')
+                  'anio', 'nomcliente','celcliente','product_cant', 'notes', 'asesor')
 
         widgets = {
             'product_name': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Nombre del pack o producto'}),
@@ -77,6 +77,8 @@ class SolicitudForm(forms.ModelForm):
             'mes': forms.Select(attrs={'class': 'form-control'}),
             'anio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Año'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'placeholer': 'Notes', 'rows': 4, 'cols': 60}),
+            'nomcliente': forms.TextInput(attrs={'class': 'form-control', 'placeholer': 'Nombre cliente'}),
+            'celcliente': forms.TextInput(attrs={'class': 'form-control', 'placeholer': 'Celular cliente'}),
             'product_cant': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad de productos'}),
             'asesor': forms.Select(attrs={'class': 'form-control'})
         }

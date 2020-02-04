@@ -71,6 +71,8 @@ class Solicitud(models.Model):
     mes = models.CharField(
         max_length=20, choices=MONTH_CHOICES, default='Enero')
     anio = models.IntegerField(default=2019)
+    nomcliente = models.CharField(max_length=200,default=None)
+    celcliente = models.CharField(max_length=100,default=None)
     notes = models.CharField(max_length=500)
     product_cant = models.IntegerField(default=1)
     asesor = models.ForeignKey(Person, on_delete=models.CASCADE)
